@@ -62,7 +62,13 @@
 ```
 경로를 직접 Read 하면 된다. 두 프로젝트가 같은 사용자 데스크탑에 있으므로 import는 못 해도 **참조는 자유**.
 
-## `/julook` 스킬 주의
+## 두 스킬의 분리
 
-`/julook` 스킬은 iOS 전용. Swift/TCA/Tuist/xcodebuild에 하드코딩되어 있어 Web에서 호출하면 빌드/테스트 단계가 모두 깨진다.
-**이 프로젝트에서는 `/julook` 호출 금지.** 직접 [docs/tdd/phases.md](../tdd/phases.md) 게이트를 따른다.
+각 스킬은 **프로젝트 폴더 안에서만** 동작한다 (project-scoped):
+
+| 스킬 | 위치 | 동작 영역 |
+|------|------|-----------|
+| `/julook` | `/Users/kimsunghun/Desktop/julook/.claude/skills/julook/` | iOS 본앱 (Swift/TCA/Tuist/xcodebuild) |
+| `/julook-web` | `/Users/kimsunghun/Desktop/julook-web/.claude/skills/julook-web/` | Web 미니앱 (Vite/React/Vitest/Apps in Toss) |
+
+같은 5인 팀 구조(orchestrator, analyst, test-author, implementer, verifier)지만 검증 명령과 도메인 문법이 다르다. **현재 폴더에 맞는 스킬만 자동 트리거**되므로 혼동 없음.

@@ -50,12 +50,14 @@
 - **테스트**: [writing](./docs/testing/writing.md)
 - **Git**: [commit](./docs/git/commit.md), [push-check](./docs/git/push-check.md)
 
-## ⚠️ `/julook` 스킬 사용 금지
+## 🤖 `/julook-web` 스킬
 
-`/julook` 스킬은 **iOS 전용**(TCA TestStore / Tuist / xcodebuild에 하드코딩됨).
-이 프로젝트에서 `/julook` 호출 금지. TDD는 본 CLAUDE.md + `docs/tdd/` 가이드를 직접 따른다.
+이 프로젝트 전용 TDD 오케스트레이터: **`/julook-web`** (`.claude/skills/julook-web/`)
+- "고쳐줘", "기능 추가", "리팩토링", "푸시 전 체크" 같은 요청에 자동 트리거
+- 5인 팀(`tdd-orchestrator`, `requirements-analyst`, `test-author`, `feature-implementer`, `qa-verifier`)이 Phase 0~5 게이트를 강제
+- 의도 자동 분류 (버그 / 기능 / 리팩토링 / 검증)
 
-> Web용 별도 스킬(`/julook-web`)은 추후 도입 검토. 현재는 직접 Phase 0~5 게이트를 수동 강제한다.
+> iOS 본앱의 `/julook` 스킬은 본앱 폴더(`/Users/kimsunghun/Desktop/julook/`)에서만 동작. 이 프로젝트에선 자동으로 사용되지 않으니 혼동 없음.
 
 ## 🔌 Apps in Toss 빌드/배포 메모
 
