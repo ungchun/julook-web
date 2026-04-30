@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ReactNode } from "react";
+import { screen } from "@testing-library/react";
+import { renderWithProviders } from "@/test/utils";
 import { Home } from "./Home";
 
 // 외부 IO 모킹 — 실제 supabase 호출 차단.
@@ -25,13 +24,6 @@ vi.mock("@/shared/lib/supabase", () => ({
     },
   },
 }));
-
-function renderWithProviders(ui: ReactNode) {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
-}
 
 beforeEach(() => {
   vi.clearAllMocks();

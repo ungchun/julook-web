@@ -3,6 +3,7 @@ import { getMakgeolliImageUrl } from "./api";
 
 type MakgeolliCardProps = {
   makgeolli: Makgeolli;
+  onClick?: () => void;
 };
 
 // 맛 4지표 라벨 매핑 (단/시/걸/탄). iOS 본앱 docs/coding/models.md 표기와 동일.
@@ -19,11 +20,11 @@ const TASTE_LABELS = [
   label: string;
 }>;
 
-export function MakgeolliCard({ makgeolli }: MakgeolliCardProps) {
+export function MakgeolliCard({ makgeolli, onClick }: MakgeolliCardProps) {
   const imageUrl = getMakgeolliImageUrl(makgeolli.image_name);
 
   return (
-    <div data-testid="makgeolli-card">
+    <div data-testid="makgeolli-card" onClick={onClick}>
       {imageUrl ? (
         <img src={imageUrl} alt={makgeolli.name} />
       ) : (
