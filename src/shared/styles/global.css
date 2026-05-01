@@ -1,0 +1,34 @@
+/*
+ * 글로벌 base styles — body, html, 기본 타이포.
+ * tokens.css의 변수 참조.
+ */
+
+html,
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-dark-base);
+  color: var(--color-w);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 데스크탑 dev 미리보기 — 모바일 폭에 컨텐츠 맞춤 (기존 index.css 동작 보존) */
+@media (min-width: 481px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    background-color: var(--color-dark-base);
+  }
+}

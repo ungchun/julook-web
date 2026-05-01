@@ -1,0 +1,72 @@
+/*
+ * 디자인 토큰 — iOS DesignSystem(Projects/DesignSystem/Sources/Resources/Assets.xcassets) 미러.
+ * 참조: /Users/kimsunghun/Desktop/julook/Projects/DesignSystem/...
+ * 다크 모드는 본앱도 미대응 → Web도 라이트 only.
+ */
+
+:root {
+  /* === 색상 === */
+  /* 브랜드 */
+  --color-primary: #ffc805;
+  --color-primary-2: #6868ff;
+
+  /* 화이트 베이스 + 투명도 변형 (iOS w/w85/w50/w25/w10) */
+  --color-w: #ffffff;
+  --color-w-85: rgba(229, 229, 255, 0.85);
+  --color-w-50: rgba(229, 229, 255, 0.5);
+  --color-w-25: rgba(229, 229, 255, 0.25);
+  --color-w-10: rgba(229, 229, 255, 0.1);
+
+  /* 다크 베이스 (앱 배경) */
+  --color-dark-base: #151a1a;
+  --color-dark-gray: #202028;
+  --color-dark-window: rgba(21, 21, 26, 0.75);
+
+  /* 강조/액센트 */
+  --color-golden-yellow: #dfa100;
+  --color-ivory: #ffe5a5;
+  --color-lilac: #7676d3;
+  --color-warm-red: #b14862;
+
+  /* 알림 */
+  --color-alert: #ff1f70;
+
+  /* === 폰트 사이즈 (iOS SF{N}{B|R} 토큰의 N) === */
+  --font-size-10: 10px;
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-15: 15px;
+  --font-size-16: 16px;
+  --font-size-17: 17px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-size-28: 28px; /* SFTitle */
+
+  /* === 폰트 가중치 === */
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+
+  /* === 간격 (4의 배수 체계) === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* === 라운딩 === */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+
+  /* === 폰트 패밀리 === */
+  /* iOS는 SF Pro 시스템 폰트 + 한글은 OS 자동 fallback 의존.
+   * Web도 동일 전략: -apple-system이 SF Pro, Apple SD Gothic Neo가 한글 fallback (Apple 기기).
+   * 안드로이드/Windows는 system-ui → Roboto/Segoe UI + 한국어 시스템 폰트. */
+  --font-family-base:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo",
+    system-ui, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+}
