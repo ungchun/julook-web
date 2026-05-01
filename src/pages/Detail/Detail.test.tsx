@@ -26,6 +26,11 @@ vi.mock("@/shared/lib/supabase", () => ({
   },
 }));
 
+// Detail 페이지에 마운트된 ReactionButtons는 D2/D3 시나리오와 무관 — stub으로 단순화.
+vi.mock("@/features/reaction", () => ({
+  ReactionButtons: () => null,
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
 });

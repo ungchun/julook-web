@@ -7,6 +7,7 @@ import {
   IngredientsSection,
   BreweryWebsiteSection,
 } from "@/features/makgeolli-detail";
+import { ReactionButtons } from "@/features/reaction";
 
 // D2: id/이름/양조장/알콜/이미지 + not-found 분기.
 // D3: 맛 4지표 + 수상 + 원재료 + 양조장 링크 (각 섹션 컴포넌트로 분리).
@@ -38,6 +39,7 @@ export function Detail() {
             thickness={data.thickness}
             carbonation={data.carbonation}
           />
+          <ReactionButtons makgeolliId={data.id} />
           <AwardsSection awards={data.awards} />
           <IngredientsSection ingredients={data.ingredients} />
           <BreweryWebsiteSection
