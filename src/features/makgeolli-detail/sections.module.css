@@ -1,0 +1,78 @@
+/* 4개 섹션 컴포넌트 공용 스타일 (Taste/Awards/Ingredients/Brewery) */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+}
+
+/* === TasteScores === */
+.tasteRow {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-2);
+}
+
+.tasteCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.tasteLabel {
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w-50);
+}
+
+.tasteScore {
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+}
+
+/* === Awards === */
+.awardList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.awardItem {
+  font-size: var(--font-size-14);
+  color: var(--color-w-85);
+  padding: var(--space-3);
+  background-color: var(--color-w-10);
+  border-radius: var(--radius-md);
+}
+
+/* === Ingredients === */
+.ingredientsBody {
+  font-size: var(--font-size-14);
+  color: var(--color-w-85);
+  line-height: 1.5;
+}
+
+.ingredientsSource {
+  font-size: var(--font-size-12);
+  color: var(--color-w-25);
+  margin-top: var(--space-3);
+}
+
+/* === BreweryWebsite === */
+.breweryLink {
+  display: inline-block;
+  font-size: var(--font-size-14);
+  color: var(--color-primary);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-w-10);
+  border-radius: var(--radius-md);
+  align-self: flex-start;
+}

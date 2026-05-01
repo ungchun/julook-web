@@ -1,0 +1,67 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-4) var(--space-10);
+}
+
+/* detail-id span — 테스트만 사용. 화면 노출 X. */
+.detailId {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.notFound {
+  font-size: var(--font-size-20);
+  color: var(--color-w-50);
+  text-align: center;
+  padding: var(--space-10) 0;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.imageBox {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.name {
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.metaRow {
+  display: flex;
+  gap: var(--space-2);
+  font-size: var(--font-size-15);
+  color: var(--color-w-50);
+}
+
+.metaRow > * + *::before {
+  content: "·";
+  margin-right: var(--space-2);
+}

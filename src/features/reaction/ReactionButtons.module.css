@@ -1,0 +1,29 @@
+.row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-w-10);
+  color: var(--color-w-85);
+  font-size: var(--font-size-15);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+/* aria-pressed=true → 활성 상태 */
+.button[aria-pressed="true"] {
+  background-color: var(--color-primary);
+  color: var(--color-dark-base);
+  font-weight: var(--font-weight-bold);
+}

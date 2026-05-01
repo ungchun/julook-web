@@ -1,4 +1,5 @@
 import { useReaction } from "./use-reaction";
+import styles from "./ReactionButtons.module.css";
 
 type ReactionButtonsProps = {
   makgeolliId: string;
@@ -10,9 +11,10 @@ export function ReactionButtons({ makgeolliId }: ReactionButtonsProps) {
   const { userReaction, counts, toggle } = useReaction(makgeolliId);
 
   return (
-    <div data-testid="reaction-buttons">
+    <div data-testid="reaction-buttons" className={styles.row}>
       <button
         type="button"
+        className={styles.button}
         aria-pressed={userReaction === "dislike"}
         onClick={() => toggle("dislike")}
       >
@@ -20,6 +22,7 @@ export function ReactionButtons({ makgeolliId }: ReactionButtonsProps) {
       </button>
       <button
         type="button"
+        className={styles.button}
         aria-pressed={userReaction === "like"}
         onClick={() => toggle("like")}
       >

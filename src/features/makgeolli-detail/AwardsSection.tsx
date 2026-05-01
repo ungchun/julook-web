@@ -1,3 +1,5 @@
+import styles from "./sections.module.css";
+
 type AwardsSectionProps = {
   awards: string[] | null;
 };
@@ -8,11 +10,13 @@ export function AwardsSection({ awards }: AwardsSectionProps) {
   if (awards == null || awards.length === 0) return null;
 
   return (
-    <section data-testid="awards">
-      <h2>수상</h2>
-      <ul>
+    <section data-testid="awards" className={styles.section}>
+      <h2 className={styles.title}>수상</h2>
+      <ul className={styles.awardList}>
         {awards.map((award) => (
-          <li key={award}>{award}</li>
+          <li key={award} className={styles.awardItem}>
+            {award}
+          </li>
         ))}
       </ul>
     </section>

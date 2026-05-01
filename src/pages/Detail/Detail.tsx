@@ -8,6 +8,7 @@ import {
   BreweryWebsiteSection,
 } from "@/features/makgeolli-detail";
 import { ReactionButtons } from "@/features/reaction";
+import styles from "./Detail.module.css";
 
 // D2: id/이름/양조장/알콜/이미지 + not-found 분기.
 // D3: 맛 4지표 + 수상 + 원재료 + 양조장 링크 (각 섹션 컴포넌트로 분리).
@@ -20,18 +21,30 @@ export function Detail() {
     data?.image_name != null ? getMakgeolliImageUrl(data.image_name) : null;
 
   return (
-    <main>
-      <span data-testid="detail-id">{id}</span>
+    <main className={styles.main}>
+      <span data-testid="detail-id" className={styles.detailId}>
+        {id}
+      </span>
       {isSuccess && data === null ? (
-        <h1>막걸리를 찾을 수 없습니다</h1>
+        <h1 className={styles.notFound}>막걸리를 찾을 수 없습니다</h1>
       ) : data ? (
         <>
-          <h1>{data.name}</h1>
-          {data.brewery != null && <p>{data.brewery}</p>}
-          {data.alcohol_percentage != null && (
-            <p>{data.alcohol_percentage}%</p>
-          )}
-          {imageUrl != null && <img src={imageUrl} alt={data.name} />}
+          <header className={styles.header}>
+            {imageUrl != null && (
+              <div className={styles.imageBox}>
+                <img className={styles.image} src={imageUrl} alt={data.name} />
+              </div>
+            )}
+            <h1 className={styles.name}>{data.name}</h1>
+            {(data.brewery != null || data.alcohol_percentage != null) && (
+              <div className={styles.metaRow}>
+                {data.brewery != null && <span>{data.brewery}</span>}
+                {data.alcohol_percentage != null && (
+                  <span>{data.alcohol_percentage}%</span>
+                )}
+              </div>
+            )}
+          </header>
 
           <TasteScoresSection
             sweetness={data.sweetness}
@@ -48,7 +61,7 @@ export function Detail() {
           />
         </>
       ) : (
-        <h1>막걸리 상세</h1>
+        <h1 className={styles.name}>막걸리 상세</h1>
       )}
     </main>
   );
