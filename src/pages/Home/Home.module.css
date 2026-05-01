@@ -1,0 +1,25 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6) 0;
+}
+
+.header {
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--font-size-14);
+  color: var(--color-w-50);
+}
