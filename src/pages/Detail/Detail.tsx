@@ -1,9 +1,16 @@
 import { useParams } from "react-router-dom";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
-import { useMakgeolli } from "@/features/makgeolli-detail";
+import {
+  useMakgeolli,
+  TasteScoresSection,
+  AwardsSection,
+  IngredientsSection,
+  BreweryWebsiteSection,
+} from "@/features/makgeolli-detail";
 
-// D2 사이클: id 노출 + 단건 페치 + 핵심 정보(이름/양조장/알콜/이미지) 표시.
-// 맛 4지표·수상·원재료 등은 D3에서 추가, 로딩/에러 UI는 시나리오 #7·#8에서.
+// D2: id/이름/양조장/알콜/이미지 + not-found 분기.
+// D3: 맛 4지표 + 수상 + 원재료 + 양조장 링크 (각 섹션 컴포넌트로 분리).
+// 차트 시각 자산은 C+, 로딩/에러 UI는 시나리오 #7·#8에서.
 export function Detail() {
   const { id } = useParams<{ id: string }>();
   const { data, isSuccess } = useMakgeolli(id);
@@ -24,6 +31,19 @@ export function Detail() {
             <p>{data.alcohol_percentage}%</p>
           )}
           {imageUrl != null && <img src={imageUrl} alt={data.name} />}
+
+          <TasteScoresSection
+            sweetness={data.sweetness}
+            sourness={data.sourness}
+            thickness={data.thickness}
+            carbonation={data.carbonation}
+          />
+          <AwardsSection awards={data.awards} />
+          <IngredientsSection ingredients={data.ingredients} />
+          <BreweryWebsiteSection
+            brewery={data.brewery}
+            website={data.website}
+          />
         </>
       ) : (
         <h1>막걸리 상세</h1>
