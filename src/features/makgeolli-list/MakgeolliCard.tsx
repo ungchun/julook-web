@@ -1,5 +1,5 @@
 import type { Makgeolli } from "@/shared/types";
-import { getMakgeolliImageUrl } from "./api";
+import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
 
 type MakgeolliCardProps = {
   makgeolli: Makgeolli;
