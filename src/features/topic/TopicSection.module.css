@@ -10,14 +10,14 @@
   color: var(--color-w);
 }
 
-/* 가로 스크롤 — main padding 상쇄 + 자체 padding으로 첫 카드 위치 확보 */
+/* 가로 스크롤 — main padding 상쇄(-16) + 자체 padding 24 (앱 16 + 추가 8) */
 .list {
   display: flex;
   gap: 16px;
   margin-left: -16px;
   margin-right: -16px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
