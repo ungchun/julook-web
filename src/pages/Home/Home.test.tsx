@@ -25,6 +25,11 @@ vi.mock("@/shared/lib/supabase", () => ({
   },
 }));
 
+// PopularSection은 D∙ 후속 사이클에서 추가 — Home의 신상 카드 시나리오와 무관 → stub.
+vi.mock("@/features/popular", () => ({
+  PopularSection: () => null,
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
