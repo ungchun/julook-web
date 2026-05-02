@@ -62,6 +62,11 @@
   --radius-lg: 12px;
   --radius-pill: 9999px;
 
+  /* === 그라디언트 (iOS LinearGradient 미러) ===
+   * Color+extensions.swift:86~108 출처. 둘 다 top → bottom. */
+  --gradient-lilac-neutral: linear-gradient(to bottom, #3d3d72, #000000);
+  --gradient-warm-neutral: linear-gradient(to bottom, #dbc2c2, #a38787);
+
   /* === 폰트 패밀리 === */
   /* iOS는 SF Pro 시스템 폰트 + 한글은 OS 자동 fallback 의존.
    * Web도 동일 전략: -apple-system이 SF Pro, Apple SD Gothic Neo가 한글 fallback (Apple 기기).
