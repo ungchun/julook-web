@@ -12,19 +12,15 @@ export function TopicSection() {
 
   return (
     <section data-testid="topic-section" className={styles.section}>
-      <h2 className={styles.title}>주제로 찾기</h2>      <div
+      <h2 className={styles.title}>주제로 찾기</h2>
+      <div
         className={styles.list}
-        style={{
-          marginLeft: -16,
-          marginRight: -16,
-          paddingLeft: 16,
-          paddingRight: 16,
-        }}
+        style={{ marginLeft: -16, marginRight: -16 }}
       >
+        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
         {koreaAwards.map((award) => (
           <div key={award.id} className={styles.card}>
             <div className={styles.cardName}>
-              {/* iOS는 단어별 줄바꿈 — Web은 white-space: pre-line + 띄어쓰기를 \n으로 */}
               {award.name.split(" ").join("\n")}
             </div>
             <img
@@ -34,6 +30,7 @@ export function TopicSection() {
             />
           </div>
         ))}
+        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
       </div>
     </section>
   );
