@@ -32,6 +32,9 @@ vi.mock("@/features/popular", () => ({
 vi.mock("@/features/random", () => ({
   RandomMakgeolliSection: () => null,
 }));
+vi.mock("@/features/topic", () => ({
+  TopicSection: () => null,
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
