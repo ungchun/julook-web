@@ -1,0 +1,95 @@
+/* iOS RecentCommentsView 미러 — "코멘트가 달렸어요 >" + 4개 항목 + Divider */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: 0 var(--space-4);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+}
+
+.titleArrow {
+  width: 16px;
+  height: 16px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4); /* iOS HStack spacing 16 */
+  cursor: pointer;
+  padding: var(--space-2) 0;
+}
+
+.imageBox {
+  width: 30px;
+  height: 60px;
+  padding: var(--space-3) var(--space-4); /* iOS .padding(.vertical, 12).horizontal 16 */
+  background-color: var(--color-dark-gray);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: content-box;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.makgeolliName {
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-w);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment {
+  font-size: var(--font-size-14);
+  color: var(--color-w-85);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.date {
+  font-size: var(--font-size-12);
+  color: var(--color-w-50);
+  margin-top: var(--space-1);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-w-10);
+  margin: var(--space-3) 0;
+}

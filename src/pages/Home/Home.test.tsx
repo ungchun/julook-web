@@ -35,6 +35,9 @@ vi.mock("@/features/random", () => ({
 vi.mock("@/features/topic", () => ({
   TopicSection: () => null,
 }));
+vi.mock("@/features/recent-comments", () => ({
+  RecentCommentsSection: () => null,
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
