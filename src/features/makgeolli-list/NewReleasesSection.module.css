@@ -10,15 +10,13 @@
   color: var(--color-w);
 }
 
-/* 가로 스크롤 — main padding 16을 -16 margin으로 상쇄(viewport 끝까지) +
- * 자체 padding 24로 첫 카드 위치 (앱 일반 16 + 추가 8). */
+/* 가로 스크롤 — main padding 상쇄용 margin만. 첫/마지막 위치는 컴포넌트의 spacer div로
+ * 처리 (iOS WebKit overflow scroll padding 무시 버그 우회). */
 .list {
   display: flex;
   gap: 16px;
   margin-left: -16px;
   margin-right: -16px;
-  padding-left: 24px;
-  padding-right: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;

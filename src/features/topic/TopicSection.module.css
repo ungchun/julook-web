@@ -10,14 +10,12 @@
   color: var(--color-w);
 }
 
-/* 가로 스크롤 — main padding 상쇄(-16) + 자체 padding 24 (앱 16 + 추가 8) */
+/* 가로 스크롤 — main padding 상쇄용 margin만. 첫/마지막 spacer div로. */
 .list {
   display: flex;
   gap: 16px;
   margin-left: -16px;
   margin-right: -16px;
-  padding-left: 24px;
-  padding-right: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
