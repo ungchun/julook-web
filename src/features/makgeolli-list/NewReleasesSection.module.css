@@ -1,20 +1,24 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 16px;
 }
 
 .title {
-  padding: 0 var(--space-4);
-  font-size: var(--font-size-20);
-  font-weight: var(--font-weight-bold);
+  font-size: 20px;
+  font-weight: 700;
   color: var(--color-w);
 }
 
+/* 가로 스크롤 — main의 좌우 padding 16을 negative margin으로 상쇄해 viewport 가득.
+ * 자체 padding-left 16으로 첫 카드 시작 위치 확보 (iOS .padding(.leading, idx == 0 ? 16 : 0) 미러). */
 .list {
   display: flex;
-  gap: var(--space-4); /* iOS LazyHStack spacing 16 */
-  padding: 0 var(--space-4);
+  gap: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;

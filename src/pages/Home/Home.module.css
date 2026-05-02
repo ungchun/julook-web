@@ -1,27 +1,26 @@
-/* iOS HomeView 미러 — VStack(spacing: 20) 전체 + HeaderView 좌:로고 우:gear */
+/* iOS HomeView 미러 — VStack(spacing 20) 전체. main 자체 좌우 padding은 global.css에서. */
 .main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5); /* iOS spacing 20 */
-  padding-bottom: var(--space-10);
+  gap: 20px;
 }
 
-/* iOS HeaderView: H 16, top 20, bottom 10, HStack 좌:title 우:settings */
+/* iOS HeaderView: padding top 20, bottom 10 (좌우는 main padding으로 충분) */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-4) var(--space-3);
+  padding-top: 20px;
+  padding-bottom: 10px;
 }
 
 .title {
-  font-size: var(--font-size-28);
-  font-weight: var(--font-weight-bold);
+  font-size: 28px;
+  font-weight: 700;
   color: var(--color-w);
   letter-spacing: -0.02em;
 }
 
-/* gear 아이콘 자리 (Phase I 설정 페이지 추가 시 활용). 현재는 자리만 확보. */
 .settingsSlot {
   width: 24px;
   height: 24px;

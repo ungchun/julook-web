@@ -1,20 +1,18 @@
-/* iOS MakgeolliFilterView 미러 — "특징으로 찾기 >" + 5개 원형 필터 가로 스크롤 */
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: 20px;
 }
 
 .titleRow {
-  padding: 0 var(--space-4);
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
 .title {
-  font-size: var(--font-size-20);
-  font-weight: var(--font-weight-bold);
+  font-size: 20px;
+  font-weight: 700;
   color: var(--color-w);
 }
 
@@ -23,10 +21,14 @@
   height: 16px;
 }
 
+/* 가로 스크롤 — main padding 상쇄 패턴 */
 .list {
   display: flex;
-  gap: var(--space-4);
-  padding: 0 var(--space-4);
+  gap: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -40,14 +42,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .iconBox {
   width: 70px;
   height: 70px;
-  border-radius: var(--radius-pill);
+  border-radius: 9999px;
   background-color: var(--color-dark-gray);
   display: flex;
   align-items: center;
@@ -61,7 +63,7 @@
 }
 
 .label {
-  font-size: var(--font-size-12);
-  font-weight: var(--font-weight-bold);
+  font-size: 12px;
+  font-weight: 700;
   color: var(--color-w-85);
 }
