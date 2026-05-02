@@ -7,7 +7,7 @@ type MakgeolliCardProps = {
   onClick?: () => void;
 };
 
-// 맛 4지표 라벨 매핑 (단/시/걸/탄). iOS 본앱 docs/coding/models.md 표기와 동일.
+// 맛 4지표 약어 라벨 (iOS L10n.Common.Taste.{sweetness,sourness,thickness,carbonation}Short).
 const TASTE_LABELS = [
   { key: "sweetness", label: "달" },
   { key: "sourness", label: "시" },
@@ -21,6 +21,12 @@ const TASTE_LABELS = [
   label: string;
 }>;
 
+// 0~5 점수에 해당하는 차트 SVG. null/범위 외는 nill.svg.
+function chartSrc(value: number | null): string {
+  if (value === null || value < 0 || value > 5) return "/assets/chart/nill.svg";
+  return `/assets/chart/${value}.svg`;
+}
+
 export function MakgeolliCard({ makgeolli, onClick }: MakgeolliCardProps) {
   const imageUrl = getMakgeolliImageUrl(makgeolli.image_name);
 
@@ -28,11 +34,7 @@ export function MakgeolliCard({ makgeolli, onClick }: MakgeolliCardProps) {
     <div data-testid="makgeolli-card" className={styles.card} onClick={onClick}>
       <div className={styles.imageBox}>
         {imageUrl ? (
-          <img
-            className={styles.image}
-            src={imageUrl}
-            alt={makgeolli.name}
-          />
+          <img className={styles.image} src={imageUrl} alt={makgeolli.name} />
         ) : (
           <div
             data-testid="makgeolli-card-image-placeholder"
@@ -43,9 +45,14 @@ export function MakgeolliCard({ makgeolli, onClick }: MakgeolliCardProps) {
       <span className={styles.name}>{makgeolli.name}</span>
       <div className={styles.tasteRow}>
         {TASTE_LABELS.map(({ key, label }) => (
-          <span key={key} className={styles.tasteCell}>
-            {label} {makgeolli[key] ?? "-"}
-          </span>
+          <div key={key} className={styles.tasteCell}>
+            <img
+              className={styles.tasteChart}
+              src={chartSrc(makgeolli[key])}
+              alt=""
+            />
+            <span className={styles.tasteLabel}>{label}</span>
+          </div>
         ))}
       </div>
     </div>

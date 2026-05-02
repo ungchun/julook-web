@@ -13,7 +13,7 @@
 
 .list {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4); /* iOS LazyHStack spacing 16 */
   padding: 0 var(--space-4);
   overflow-x: auto;
   scroll-snap-type: x mandatory;

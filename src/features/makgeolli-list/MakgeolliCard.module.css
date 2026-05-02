@@ -1,33 +1,35 @@
+/* iOS NewReleasesView 카드 미러: 104x240, darkgray, padding 20, VStack spacing 12. */
 .card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  width: 140px;
-  padding: var(--space-3);
-  background-color: var(--color-w-10);
-  border-radius: var(--radius-lg);
+  gap: var(--space-3); /* iOS spacing 12 */
+  width: 104px;
+  height: 240px;
+  padding: var(--space-5); /* iOS padding 20 */
+  background-color: var(--color-dark-gray);
+  border-radius: var(--radius-lg); /* iOS cornerRadius 16 ≈ 12*1.33 — 토큰의 lg(12) 사용 */
   cursor: pointer;
   transition: transform 0.1s ease;
+  flex-shrink: 0;
 }
 
 .card:active {
   transform: scale(0.97);
 }
 
+/* 이미지 50x114 aspectFit (iOS makeImageView frame) */
 .imageBox {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--radius-md);
-  background-color: var(--color-w-10);
-  overflow: hidden;
+  width: 50px;
+  height: 114px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .image {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
@@ -37,22 +39,39 @@
 }
 
 .name {
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-regular);
   color: var(--color-w);
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* 4지표 row — 카드 하단에 정렬 (iOS Spacer로 push) */
 .tasteRow {
+  margin-top: auto;
   display: flex;
-  gap: var(--space-2);
-  font-size: var(--font-size-12);
-  color: var(--color-w-50);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-1); /* iOS HStack spacing 4 */
 }
 
 .tasteCell {
-  display: inline-flex;
-  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.tasteChart {
+  width: 12px;
+  height: auto;
+  display: block;
+}
+
+.tasteLabel {
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w-50);
 }
