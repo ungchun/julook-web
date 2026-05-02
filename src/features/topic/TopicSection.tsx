@@ -12,8 +12,15 @@ export function TopicSection() {
 
   return (
     <section data-testid="topic-section" className={styles.section}>
-      <h2 className={styles.title}>주제로 찾기</h2>
-      <div className={styles.list}>
+      <h2 className={styles.title}>주제로 찾기</h2>      <div
+        className={styles.list}
+        style={{
+          marginLeft: -16,
+          marginRight: -16,
+          paddingLeft: 16,
+          paddingRight: 16,
+        }}
+      >
         {koreaAwards.map((award) => (
           <div key={award.id} className={styles.card}>
             <div className={styles.cardName}>

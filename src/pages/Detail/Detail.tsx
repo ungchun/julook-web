@@ -22,7 +22,10 @@ export function Detail() {
     data?.image_name != null ? getMakgeolliImageUrl(data.image_name) : null;
 
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+    >
       <span data-testid="detail-id" className={styles.detailId}>
         {id}
       </span>

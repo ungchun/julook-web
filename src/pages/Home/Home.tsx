@@ -11,7 +11,10 @@ import styles from "./Home.module.css";
 // 5. NewReleases / 6. Topic(수상) / 7. RecentComments
 export function Home() {
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+    >
       <header className={styles.header}>
         <h1 className={styles.title}>주룩</h1>
         {/* gear 아이콘 자리 — Phase I(설정 페이지)에서 채움 */}

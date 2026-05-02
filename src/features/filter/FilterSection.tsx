@@ -30,7 +30,15 @@ export function FilterSection() {
           alt=""
         />
       </div>
-      <div className={styles.list}>
+      <div
+        className={styles.list}
+        style={{
+          marginLeft: -16,
+          marginRight: -16,
+          paddingLeft: 16,
+          paddingRight: 16,
+        }}
+      >
         {FILTERS.map((filter) => (
           <div key={filter.id} className={styles.cell}>
             <div className={styles.iconBox}>

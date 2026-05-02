@@ -17,7 +17,15 @@ export function RandomMakgeolliSection() {
       className={sectionStyles.section}
     >
       <h2 className={sectionStyles.title}>이 막걸리는 어때요?</h2>
-      <div className={sectionStyles.list}>
+      <div
+        className={sectionStyles.list}
+        style={{
+          marginLeft: -16,
+          marginRight: -16,
+          paddingLeft: 16,
+          paddingRight: 16,
+        }}
+      >
         {data.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}

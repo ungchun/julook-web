@@ -14,7 +14,15 @@ export function NewReleasesSection() {
   return (
     <section className={styles.section}>
       <h2 className={styles.title}>신상 막걸리</h2>
-      <div className={styles.list}>
+      <div
+        className={styles.list}
+        style={{
+          marginLeft: -16,
+          marginRight: -16,
+          paddingLeft: 16,
+          paddingRight: 16,
+        }}
+      >
         {newReleases.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}
