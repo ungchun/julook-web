@@ -17,6 +17,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* 하단 BottomTabBar(높이 60px) 안 가리도록 main 영역 padding-bottom 확보. */
+main {
+  padding-bottom: 60px;
+}
+
 /* 데스크탑 dev 미리보기 — 모바일 폭에 컨텐츠 맞춤 (기존 index.css 동작 보존) */
 @media (min-width: 481px) {
   body {

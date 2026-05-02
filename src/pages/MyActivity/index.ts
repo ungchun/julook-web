@@ -1,0 +1,1 @@
+export { MyActivity } from "./MyActivity";
