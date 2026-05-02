@@ -1,5 +1,6 @@
 import { NewReleasesSection } from "@/features/makgeolli-list";
 import { PopularSection } from "@/features/popular";
+import { RandomMakgeolliSection } from "@/features/random";
 import styles from "./Home.module.css";
 
 // iOS HomeView 섹션 순서 미러 (사용자 액션 컴포넌트는 단계적 추가).
@@ -13,6 +14,7 @@ export function Home() {
         {/* gear 아이콘 자리 — Phase I(설정 페이지)에서 채움 */}
         <div className={styles.settingsSlot} aria-hidden="true" />
       </header>
+      <RandomMakgeolliSection />
       <PopularSection />
       <NewReleasesSection />
     </main>
