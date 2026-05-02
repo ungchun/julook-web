@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
 import {
   useMakgeolli,
@@ -15,6 +15,7 @@ import styles from "./Detail.module.css";
 // 차트 시각 자산은 C+, 로딩/에러 UI는 시나리오 #7·#8에서.
 export function Detail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data, isSuccess } = useMakgeolli(id);
 
   const imageUrl =
@@ -25,6 +26,20 @@ export function Detail() {
       <span data-testid="detail-id" className={styles.detailId}>
         {id}
       </span>
+      <nav className={styles.navBar}>
+        <button
+          type="button"
+          className={styles.closeButton}
+          aria-label="닫기"
+          onClick={() => navigate(-1)}
+        >
+          <img
+            className={styles.closeIcon}
+            src="/assets/icon/close.svg"
+            alt=""
+          />
+        </button>
+      </nav>
       {isSuccess && data === null ? (
         <h1 className={styles.notFound}>막걸리를 찾을 수 없습니다</h1>
       ) : data ? (

@@ -1,15 +1,17 @@
+/* iOS HomeView 미러 — VStack(spacing: 20) 전체 + HeaderView 좌:로고 우:gear */
 .main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-6) 0;
+  gap: var(--space-5); /* iOS spacing 20 */
+  padding-bottom: var(--space-10);
 }
 
+/* iOS HeaderView: H 16, top 20, bottom 10, HStack 좌:title 우:settings */
 .header {
-  padding: 0 var(--space-4);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-4) var(--space-3);
 }
 
 .title {
@@ -19,7 +21,8 @@
   letter-spacing: -0.02em;
 }
 
-.subtitle {
-  font-size: var(--font-size-14);
-  color: var(--color-w-50);
+/* gear 아이콘 자리 (Phase I 설정 페이지 추가 시 활용). 현재는 자리만 확보. */
+.settingsSlot {
+  width: 24px;
+  height: 24px;
 }
