@@ -30,11 +30,7 @@ export function FilterSection() {
           alt=""
         />
       </div>
-      <div
-        className={styles.list}
-        style={{ marginLeft: -16, marginRight: -16 }}
-      >
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
+      <div className={styles.list}>
         {FILTERS.map((filter) => (
           <div key={filter.id} className={styles.cell}>
             <div className={styles.iconBox}>
@@ -43,7 +39,6 @@ export function FilterSection() {
             <span className={styles.label}>{filter.label}</span>
           </div>
         ))}
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
       </div>
     </section>
   );

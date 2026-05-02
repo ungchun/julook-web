@@ -14,12 +14,7 @@ export function NewReleasesSection() {
   return (
     <section className={styles.section}>
       <h2 className={styles.title}>신상 막걸리</h2>
-      <div
-        className={styles.list}
-        style={{ marginLeft: -16, marginRight: -16 }}
-      >
-        {/* iOS WebKit overflow-x scroll에서 padding이 무시되는 버그 우회 — spacer div로 처리 */}
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
+      <div className={styles.list}>
         {newReleases.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}
@@ -27,7 +22,6 @@ export function NewReleasesSection() {
             onClick={() => navigate(`/makgeolli/${makgeolli.id}`)}
           />
         ))}
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
       </div>
     </section>
   );

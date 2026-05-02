@@ -17,11 +17,7 @@ export function RandomMakgeolliSection() {
       className={sectionStyles.section}
     >
       <h2 className={sectionStyles.title}>이 막걸리는 어때요?</h2>
-      <div
-        className={sectionStyles.list}
-        style={{ marginLeft: -16, marginRight: -16 }}
-      >
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
+      <div className={sectionStyles.list}>
         {data.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}
@@ -29,7 +25,6 @@ export function RandomMakgeolliSection() {
             onClick={() => navigate(`/makgeolli/${makgeolli.id}`)}
           />
         ))}
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
       </div>
     </section>
   );

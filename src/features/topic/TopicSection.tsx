@@ -13,11 +13,7 @@ export function TopicSection() {
   return (
     <section data-testid="topic-section" className={styles.section}>
       <h2 className={styles.title}>주제로 찾기</h2>
-      <div
-        className={styles.list}
-        style={{ marginLeft: -16, marginRight: -16 }}
-      >
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
+      <div className={styles.list}>
         {koreaAwards.map((award) => (
           <div key={award.id} className={styles.card}>
             <div className={styles.cardName}>
@@ -30,7 +26,6 @@ export function TopicSection() {
             />
           </div>
         ))}
-        <div style={{ width: 16, flexShrink: 0 }} aria-hidden="true" />
       </div>
     </section>
   );
