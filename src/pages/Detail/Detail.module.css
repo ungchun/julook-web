@@ -2,7 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  /* main에 좌우 padding 16은 global.css에서. 추가 padding 없음. */
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 60px;
 }
 
 /* iOS InformationView+NavigationBar 미러 — height 40, top 4, bottom 32 (찜 제거하여 우측 close만) */

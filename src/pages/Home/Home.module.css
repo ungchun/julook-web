@@ -1,8 +1,11 @@
-/* iOS HomeView 미러 — VStack(spacing 20) 전체. main 자체 좌우 padding은 global.css에서. */
+/* iOS HomeView 미러 — VStack(spacing 20) 전체. */
 .main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 60px;
 }
 
 /* iOS HeaderView: padding top 20, bottom 10 (좌우는 main padding으로 충분) */

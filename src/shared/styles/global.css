@@ -17,28 +17,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* iOS HomeView/InformationView 모두 horizontal 16, 하단 60px(BottomTabBar 높이). */
-main {
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-bottom: 60px;
-}
-
-/* 가로 스크롤 섹션은 main padding을 negative margin으로 상쇄해 viewport 끝까지 차게.
- * 그 안에서 자체 padding-x 16으로 첫 카드 시작 위치 확보 (iOS .padding(.leading, idx == 0 ? 16 : 0) 미러). */
-.h-scroll {
-  margin-left: -16px;
-  margin-right: -16px;
-  padding-left: 16px;
-  padding-right: 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.h-scroll::-webkit-scrollbar {
-  display: none;
-}
+/* main의 좌우 padding은 각 페이지 .module.css에서 직접 부여 (글로벌 main 셀렉터가
+ * 일부 WebView 환경에서 적용 안 되는 케이스 회피 — specificity 더 높은 클래스로 처리). */
 
 /* 데스크탑 dev 미리보기 — 모바일 폭에 컨텐츠 맞춤 (기존 index.css 동작 보존) */
 @media (min-width: 481px) {
