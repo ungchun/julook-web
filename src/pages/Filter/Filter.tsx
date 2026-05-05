@@ -3,7 +3,6 @@ import { MakgeolliCard } from "@/features/makgeolli-list";
 import {
   getFilterMeta,
   useFilteredMakgeollis,
-  type FilterSlug,
 } from "@/features/filter";
 import styles from "./Filter.module.css";
 
@@ -13,8 +12,7 @@ export function Filter() {
   const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
   const meta = type != null ? getFilterMeta(type) : undefined;
-  const slug = meta?.slug as FilterSlug | undefined;
-  const { data } = useFilteredMakgeollis(slug);
+  const { data } = useFilteredMakgeollis(meta?.slug);
 
   return (
     <main
@@ -36,14 +34,16 @@ export function Filter() {
         </button>
       </nav>
 
-      {meta == null ? (
+      {meta == null && (
         <p className={styles.empty}>지원하지 않는 필터입니다</p>
-      ) : (
+      )}
+      {meta != null && (
         <>
           <h1 className={styles.title}>{meta.label}</h1>
-          {data && data.length === 0 ? (
+          {data?.length === 0 && (
             <p className={styles.empty}>결과가 없어요</p>
-          ) : data ? (
+          )}
+          {data != null && data.length > 0 && (
             <div className={styles.list}>
               {data.map((m) => (
                 <MakgeolliCard
@@ -53,7 +53,7 @@ export function Filter() {
                 />
               ))}
             </div>
-          ) : null}
+          )}
         </>
       )}
     </main>
