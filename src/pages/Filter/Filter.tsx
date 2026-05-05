@@ -4,6 +4,7 @@ import {
   getFilterMeta,
   useFilteredMakgeollis,
 } from "@/features/filter";
+import { PageNav } from "@/shared/ui/PageNav";
 import styles from "./Filter.module.css";
 
 // /filter/:type — 단일 특징 필터 페이지. 사용자 액션은 카드 클릭(상세 진입)뿐.
@@ -19,20 +20,7 @@ export function Filter() {
       className={styles.main}
       style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
     >
-      <nav className={styles.navBar}>
-        <button
-          type="button"
-          className={styles.closeButton}
-          aria-label="닫기"
-          onClick={() => navigate(-1)}
-        >
-          <img
-            className={styles.closeIcon}
-            src="/assets/icon/close.svg"
-            alt=""
-          />
-        </button>
-      </nav>
+      <PageNav onClose={() => navigate(-1)} />
 
       {meta == null && (
         <p className={styles.empty}>지원하지 않는 필터입니다</p>

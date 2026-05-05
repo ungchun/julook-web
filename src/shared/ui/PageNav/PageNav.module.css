@@ -1,0 +1,20 @@
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 44px;
+}
+
+.closeButton {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
+
+.closeIcon {
+  width: 100%;
+  height: 100%;
+}

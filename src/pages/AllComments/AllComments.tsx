@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
 import { formatDateYMD } from "@/shared/lib/format-date";
 import { useAllPublicComments } from "@/features/recent-comments/use-all-public-comments";
+import { PageNav } from "@/shared/ui/PageNav";
 import styles from "./AllComments.module.css";
 
 // /comments/all — 전 막걸리 대상 공개 코멘트 페이지.
@@ -16,20 +17,7 @@ export function AllComments() {
       className={styles.main}
       style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
     >
-      <nav className={styles.navBar}>
-        <button
-          type="button"
-          className={styles.closeButton}
-          aria-label="닫기"
-          onClick={() => navigate(-1)}
-        >
-          <img
-            className={styles.closeIcon}
-            src="/assets/icon/close.svg"
-            alt=""
-          />
-        </button>
-      </nav>
+      <PageNav onClose={() => navigate(-1)} />
 
       <h1 className={styles.title}>코멘트가 달렸어요</h1>
 
