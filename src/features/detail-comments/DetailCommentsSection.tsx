@@ -1,16 +1,11 @@
 import { Fragment } from "react";
+import { formatDateYMD } from "@/shared/lib/format-date";
 import { useDetailComments } from "./use-detail-comments";
 import styles from "./DetailCommentsSection.module.css";
 
 type Props = {
   makgeolliId: string | undefined;
 };
-
-// iOS Common.Format.dateYMD = "yyyy년 M월 d일" 미러 (recent-comments와 동일).
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
-}
 
 // 상세 페이지 하단 공개 코멘트 섹션. iOS InformationView+Evaluation.publicCommentsStrip /
 // AllCommentsSheetView 의 단순화 버전 — 본문 + 작성일만 노출.
@@ -28,7 +23,7 @@ export function DetailCommentsSection({ makgeolliId }: Props) {
           <Fragment key={c.id}>
             <article data-testid="detail-comment-item" className={styles.item}>
               <p className={styles.comment}>{c.comment}</p>
-              <span className={styles.date}>{formatDate(c.created_at)}</span>
+              <span className={styles.date}>{formatDateYMD(c.created_at)}</span>
             </article>
             {idx !== data.length - 1 && <div className={styles.divider} />}
           </Fragment>

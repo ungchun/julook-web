@@ -1,14 +1,9 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
+import { formatDateYMD } from "@/shared/lib/format-date";
 import { useRecentComments } from "./use-recent-comments";
 import styles from "./RecentCommentsSection.module.css";
-
-// iOS L10n.Common.Format.dateYMD = "yyyy년 M월 d일" 미러.
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
-}
 
 // iOS RecentCommentsView 미러 — "코멘트가 달렸어요 >" + 최근 공개 코멘트 4개.
 // 작성자 reaction circle, 코멘트 페이지 진입은 후속 사이클(E3·E4).
@@ -52,7 +47,7 @@ export function RecentCommentsSection() {
                   </span>
                   <p className={styles.comment}>{item.comment.comment}</p>
                   <span className={styles.date}>
-                    {formatDate(item.comment.created_at)}
+                    {formatDateYMD(item.comment.created_at)}
                   </span>
                 </div>
               </div>
