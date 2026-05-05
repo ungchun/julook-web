@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
-import { formatDateYMD } from "@/shared/lib/format-date";
+import { CommentRow } from "@/shared/ui/CommentRow";
 import { useAllPublicComments } from "@/features/recent-comments/use-all-public-comments";
 import { PageNav } from "@/shared/ui/PageNav";
 import styles from "./AllComments.module.css";
@@ -26,40 +25,19 @@ export function AllComments() {
       )}
       {data != null && data.length > 0 && (
         <div className={styles.list}>
-          {data.map((item, idx) => {
-            const imageUrl = getMakgeolliImageUrl(item.makgeolli.image_name);
-            return (
-              <Fragment key={item.comment.id}>
-                <div
-                  data-testid="all-comments-row"
-                  className={styles.row}
-                  onClick={() => navigate(`/makgeolli/${item.makgeolli.id}`)}
-                >
-                  <div className={styles.imageBox}>
-                    {imageUrl && (
-                      <img
-                        className={styles.image}
-                        src={imageUrl}
-                        alt={item.makgeolli.name}
-                      />
-                    )}
-                  </div>
-                  <div className={styles.body}>
-                    <span className={styles.makgeolliName}>
-                      {item.makgeolli.name}
-                    </span>
-                    <p className={styles.comment}>{item.comment.comment}</p>
-                    <span className={styles.date}>
-                      {formatDateYMD(item.comment.created_at)}
-                    </span>
-                  </div>
-                </div>
-                {idx !== data.length - 1 && (
-                  <div className={styles.divider} />
-                )}
-              </Fragment>
-            );
-          })}
+          {data.map((item, idx) => (
+            <Fragment key={item.comment.id}>
+              <CommentRow
+                comment={item.comment}
+                makgeolli={item.makgeolli}
+                onClick={() => navigate(`/makgeolli/${item.makgeolli.id}`)}
+                testId="all-comments-row"
+              />
+              {idx !== data.length - 1 && (
+                <div className={styles.divider} />
+              )}
+            </Fragment>
+          ))}
         </div>
       )}
     </main>
