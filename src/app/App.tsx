@@ -6,6 +6,7 @@ import { Detail } from "@/pages/Detail";
 import { Search } from "@/pages/Search";
 import { MyActivity } from "@/pages/MyActivity";
 import { Filter } from "@/pages/Filter";
+import { Awards } from "@/pages/Awards";
 import { BottomTabBar } from "@/features/tab-bar";
 
 export function App() {
@@ -16,6 +17,7 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/makgeolli/:id" element={<Detail />} />
           <Route path="/filter/:type" element={<Filter />} />
+          <Route path="/awards/:awardId" element={<Awards />} />
           <Route path="/search" element={<Search />} />
           <Route path="/my-activity" element={<MyActivity />} />
         </Routes>

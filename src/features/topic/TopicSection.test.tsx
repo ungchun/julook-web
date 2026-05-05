@@ -41,8 +41,9 @@ describe("TopicSection navigation", () => {
       { route: "/" },
     );
 
+    // award.name 은 단어별 줄바꿈으로 렌더되므로 \s+ 로 매칭
     const card = await screen.findByRole("button", {
-      name: /2024 대한민국 주류대상/,
+      name: /2024\s+대한민국\s+주류대상/,
     });
     await user.click(card);
 

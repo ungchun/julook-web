@@ -36,6 +36,10 @@
   padding: 16px;
   position: relative;
   overflow: hidden;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .cardName {
