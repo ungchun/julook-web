@@ -36,3 +36,4 @@ dist-ssr
 # TDD workspace (Phase별 산출물 추적, 로컬 전용)
 _workspace/
 _workspace_prev/
+_workspace_prev2/
