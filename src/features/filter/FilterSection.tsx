@@ -1,25 +1,19 @@
+import { useNavigate } from "react-router-dom";
+import { FILTER_META, type FilterSlug } from "./types";
 import styles from "./FilterSection.module.css";
 
-// iOS FilterType (CaseIterable) 미러. 정적 5개 — 서버 fetch 없음.
-// 라벨은 iOS L10n.Filter.Kind 미러 (한국어).
-const FILTERS = [
-  { id: "thick", label: "걸쭉한", icon: "/assets/filter/thick.svg" },
-  { id: "sweet", label: "달달한", icon: "/assets/filter/sweet.svg" },
-  { id: "sour", label: "시큼한", icon: "/assets/filter/sour.svg" },
-  {
-    id: "carbonated",
-    label: "탄산감 많은",
-    icon: "/assets/filter/carbonated.svg",
-  },
-  {
-    id: "no-sweetener",
-    label: "감미료 없는",
-    icon: "/assets/filter/no-sweetener.svg",
-  },
-] as const;
+const FILTER_ORDER: readonly FilterSlug[] = [
+  "thick",
+  "sweet",
+  "sour",
+  "carbonated",
+  "no-sweetener",
+];
 
-// iOS MakgeolliFilterView 미러 — 헤더 클릭/항목 클릭 시 필터 페이지 진입은 H 페이즈에서.
+// iOS MakgeolliFilterView 미러 — 항목 탭 시 /filter/:slug 진입.
 export function FilterSection() {
+  const navigate = useNavigate();
+
   return (
     <section data-testid="filter-section" className={styles.section}>
       <div className={styles.titleRow}>
@@ -31,14 +25,22 @@ export function FilterSection() {
         />
       </div>
       <div className={styles.list}>
-        {FILTERS.map((filter) => (
-          <div key={filter.id} className={styles.cell}>
-            <div className={styles.iconBox}>
-              <img className={styles.icon} src={filter.icon} alt="" />
-            </div>
-            <span className={styles.label}>{filter.label}</span>
-          </div>
-        ))}
+        {FILTER_ORDER.map((slug) => {
+          const meta = FILTER_META[slug];
+          return (
+            <button
+              key={slug}
+              type="button"
+              className={styles.cell}
+              onClick={() => navigate(`/filter/${slug}`)}
+            >
+              <div className={styles.iconBox}>
+                <img className={styles.icon} src={meta.icon} alt="" />
+              </div>
+              <span className={styles.label}>{meta.label}</span>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
