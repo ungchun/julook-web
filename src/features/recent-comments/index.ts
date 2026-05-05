@@ -1,3 +1,5 @@
 export { RecentCommentsSection } from "./RecentCommentsSection";
 export { useRecentComments } from "./use-recent-comments";
-export { fetchRecentComments } from "./api";
+export { useAllPublicComments } from "./use-all-public-comments";
+export { fetchRecentComments, fetchAllPublicComments } from "./api";
+export type { RecentCommentItem } from "./api";

@@ -15,14 +15,18 @@ export function RecentCommentsSection() {
 
   return (
     <section data-testid="recent-comments-section" className={styles.section}>
-      <div className={styles.titleRow}>
+      <button
+        type="button"
+        className={styles.titleRow}
+        onClick={() => navigate("/comments/all")}
+      >
         <h2 className={styles.title}>코멘트가 달렸어요</h2>
         <img
           className={styles.titleArrow}
           src="/assets/arrow/right.svg"
           alt=""
         />
-      </div>
+      </button>
       <div className={styles.list}>
         {data.map((item, idx) => {
           const imageUrl = getMakgeolliImageUrl(item.makgeolli.image_name);
