@@ -31,6 +31,13 @@ vi.mock("@/features/reaction", () => ({
   ReactionButtons: () => null,
 }));
 
+// DetailCommentsSection은 별도 테스트가 있고, 여기선 마운트 + makgeolliId prop 전달만 검증.
+vi.mock("@/features/detail-comments", () => ({
+  DetailCommentsSection: ({ makgeolliId }: { makgeolliId: string | undefined }) => (
+    <div data-testid="detail-comments-stub" data-makgeolli-id={makgeolliId} />
+  ),
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -283,5 +290,33 @@ describe("Detail page", () => {
 
     await screen.findByText("느린마을 막걸리");
     expect(screen.queryByTestId("brewery-website")).not.toBeInTheDocument();
+  });
+
+  it("when detail loaded, mounts DetailCommentsSection with the makgeolli id", async () => {
+    setupSupabase(makeFixture({ id: "fixture-id" }));
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/makgeolli/:id" element={<Detail />} />
+      </Routes>,
+      { route: "/makgeolli/fixture-id" },
+    );
+
+    const stub = await screen.findByTestId("detail-comments-stub");
+    expect(stub).toHaveAttribute("data-makgeolli-id", "fixture-id");
+  });
+
+  it("when fetched data is null (not found), then DetailCommentsSection is not mounted", async () => {
+    setupSupabase(null);
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/makgeolli/:id" element={<Detail />} />
+      </Routes>,
+      { route: "/makgeolli/missing-id" },
+    );
+
+    await screen.findByText("막걸리를 찾을 수 없습니다");
+    expect(screen.queryByTestId("detail-comments-stub")).not.toBeInTheDocument();
   });
 });
