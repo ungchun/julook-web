@@ -8,6 +8,7 @@ import {
   BreweryWebsiteSection,
 } from "@/features/makgeolli-detail";
 import { ReactionButtons } from "@/features/reaction";
+import { DetailCommentsSection } from "@/features/detail-comments";
 import styles from "./Detail.module.css";
 
 // D2: id/이름/양조장/알콜/이미지 + not-found 분기.
@@ -77,6 +78,7 @@ export function Detail() {
             brewery={data.brewery}
             website={data.website}
           />
+          <DetailCommentsSection makgeolliId={data.id} />
         </>
       ) : (
         <h1 className={styles.name}>막걸리 상세</h1>
