@@ -86,11 +86,14 @@ describe("RecentCommentsSection navigation", () => {
 
     renderWithProviders(<RecentCommentsSection />);
 
-    const icons = await screen.findAllByTestId("comment-author-reaction");
-    expect(icons[0]).toHaveAttribute(
-      "src",
-      "/assets/reaction/circle_like.svg",
-    );
+    // reaction fetch 가 끝나면 src 가 circle_like.svg 로 갱신되어야 함
+    await vi.waitFor(() => {
+      const icon = screen.getAllByTestId("comment-author-reaction")[0];
+      expect(icon).toHaveAttribute(
+        "src",
+        "/assets/reaction/circle_like.svg",
+      );
+    });
     expect(fetchUserReactionMock).toHaveBeenCalledWith("u_1", "m_1");
   });
 });

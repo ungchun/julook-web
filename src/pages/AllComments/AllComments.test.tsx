@@ -173,15 +173,18 @@ describe("AllComments page", () => {
       { route: "/comments/all" },
     );
 
-    const icons = await screen.findAllByTestId("comment-author-reaction");
-    expect(icons).toHaveLength(2);
-    expect(icons[0]).toHaveAttribute(
-      "src",
-      "/assets/reaction/circle_like.svg",
-    );
-    expect(icons[1]).toHaveAttribute(
-      "src",
-      "/assets/reaction/circle_dislike.svg",
-    );
+    // reaction fetch 완료 후 src 갱신 대기
+    await vi.waitFor(() => {
+      const icons = screen.getAllByTestId("comment-author-reaction");
+      expect(icons).toHaveLength(2);
+      expect(icons[0]).toHaveAttribute(
+        "src",
+        "/assets/reaction/circle_like.svg",
+      );
+      expect(icons[1]).toHaveAttribute(
+        "src",
+        "/assets/reaction/circle_dislike.svg",
+      );
+    });
   });
 });

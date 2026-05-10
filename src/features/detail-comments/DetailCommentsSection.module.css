@@ -23,6 +23,13 @@
   padding: var(--space-2) 0;
 }
 
+/* iOS publicCommentCard: 좌상단 reaction icon */
+.reactionIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 .comment {
   font-size: var(--font-size-14);
   color: var(--color-w-85);

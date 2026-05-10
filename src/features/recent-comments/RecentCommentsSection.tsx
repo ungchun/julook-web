@@ -1,14 +1,17 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { CommentRow } from "@/shared/ui/CommentRow";
+import { useCommentAuthorReactions } from "@/features/reaction";
 import { useRecentComments } from "./use-recent-comments";
 import styles from "./RecentCommentsSection.module.css";
 
 // iOS RecentCommentsView 미러 — "코멘트가 달렸어요 >" + 최근 공개 코멘트 4개.
-// 작성자 reaction circle, 코멘트 페이지 진입은 후속 사이클(E3·E4).
 export function RecentCommentsSection() {
   const { data } = useRecentComments();
   const navigate = useNavigate();
+  const { data: reactions } = useCommentAuthorReactions(
+    data?.map((item) => item.comment),
+  );
 
   if (!data || data.length === 0) return null;
 
@@ -34,6 +37,7 @@ export function RecentCommentsSection() {
               makgeolli={item.makgeolli}
               onClick={() => navigate(`/makgeolli/${item.makgeolli.id}`)}
               preview
+              reactionType={reactions?.get(item.comment.id) ?? null}
             />
             {idx !== data.length - 1 && <div className={styles.divider} />}
           </Fragment>

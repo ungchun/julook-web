@@ -1,15 +1,19 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { CommentRow } from "@/shared/ui/CommentRow";
+import { useCommentAuthorReactions } from "@/features/reaction";
 import { useAllPublicComments } from "@/features/recent-comments/use-all-public-comments";
 import { PageNav } from "@/shared/ui/PageNav";
 import styles from "./AllComments.module.css";
 
 // /comments/all — 전 막걸리 대상 공개 코멘트 페이지.
-// iOS CommentListView 미러. 1단계: 페이지네이션/reaction circle 보류.
+// iOS CommentListView 미러. 1단계: 페이지네이션 보류.
 export function AllComments() {
   const { data } = useAllPublicComments();
   const navigate = useNavigate();
+  const { data: reactions } = useCommentAuthorReactions(
+    data?.map((item) => item.comment),
+  );
 
   return (
     <main
@@ -32,6 +36,7 @@ export function AllComments() {
                 makgeolli={item.makgeolli}
                 onClick={() => navigate(`/makgeolli/${item.makgeolli.id}`)}
                 testId="all-comments-row"
+                reactionType={reactions?.get(item.comment.id) ?? null}
               />
               {idx !== data.length - 1 && (
                 <div className={styles.divider} />
