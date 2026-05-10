@@ -1,10 +1,20 @@
 import { supabase } from "@/shared/lib/supabase";
-import type { Makgeolli } from "@/shared/types";
+import type { Makgeolli, ReactionType, UserComment } from "@/shared/types";
 
 export type MyActivityItem = {
   makgeolli: Makgeolli;
   /** 가장 최근 활동 시각(reaction.updated_at 또는 comment.updated_at 중 큰 값). */
   lastActivityAt: string;
+};
+
+export type MyReactionItem = {
+  makgeolli: Makgeolli;
+  reactedAt: string;
+};
+
+export type MyCommentItem = {
+  comment: UserComment;
+  makgeolli: Makgeolli;
 };
 
 type MakgeolliIdRow = { makgeolli_id: string; updated_at: string };
@@ -62,5 +72,80 @@ export async function fetchMyAllActivity(
   }
 
   items.sort((a, b) => (a.lastActivityAt < b.lastActivityAt ? 1 : -1));
+  return items;
+}
+
+// iOS reactionClient.getAllReactions + 클라이언트 type 필터의 Web 단순화 —
+// supabase 에서 user_id + reaction_type 직접 필터.
+export async function fetchMyReactionMakgeollis(
+  userId: string,
+  reactionType: ReactionType,
+): Promise<MyReactionItem[]> {
+  const { data: reactions, error: reactionsError } = await supabase
+    .from("makgeolli_reactions")
+    .select("makgeolli_id, updated_at")
+    .eq("user_id", userId)
+    .eq("reaction_type", reactionType)
+    .order("updated_at", { ascending: false });
+
+  if (reactionsError) throw reactionsError;
+  const rows = (reactions ?? []) as Array<{
+    makgeolli_id: string;
+    updated_at: string;
+  }>;
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((r) => r.makgeolli_id);
+  const { data: makgeollis, error } = await supabase
+    .from("makgeolli")
+    .select("*")
+    .in("id", ids);
+
+  if (error) throw error;
+
+  const byId = new Map(
+    ((makgeollis ?? []) as Makgeolli[]).map((m) => [m.id, m]),
+  );
+
+  // reaction order(updated_at desc) 그대로 보존
+  const items: MyReactionItem[] = [];
+  for (const row of rows) {
+    const makgeolli = byId.get(row.makgeolli_id);
+    if (makgeolli) items.push({ makgeolli, reactedAt: row.updated_at });
+  }
+  return items;
+}
+
+// iOS getUserComments(userId) 미러 — 본인 모든 코멘트(공개/비공개 포함) + makgeolli 조인.
+export async function fetchMyComments(
+  userId: string,
+): Promise<MyCommentItem[]> {
+  const { data: comments, error: commentsError } = await supabase
+    .from("user_comments")
+    .select("*")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false });
+
+  if (commentsError) throw commentsError;
+  const rows = (comments ?? []) as UserComment[];
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((c) => c.makgeolli_id);
+  const { data: makgeollis, error } = await supabase
+    .from("makgeolli")
+    .select("*")
+    .in("id", ids);
+
+  if (error) throw error;
+
+  const byId = new Map(
+    ((makgeollis ?? []) as Makgeolli[]).map((m) => [m.id, m]),
+  );
+
+  const items: MyCommentItem[] = [];
+  for (const comment of rows) {
+    const makgeolli = byId.get(comment.makgeolli_id);
+    if (makgeolli) items.push({ comment, makgeolli });
+  }
   return items;
 }

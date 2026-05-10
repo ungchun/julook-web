@@ -115,8 +115,9 @@ describe("MyActivity page", () => {
     expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(2);
   });
 
-  it("when '좋아요' tab clicked, URL changes to ?tab=like and shows '준비 중' placeholder", async () => {
+  it("when '좋아요' tab clicked, URL changes to ?tab=like and like content is shown", async () => {
     useMyAllActivityRef.current = [];
+    useMyLikedRef.current = [];
     const user = userEvent.setup();
 
     renderWithProviders(
@@ -128,7 +129,11 @@ describe("MyActivity page", () => {
 
     await user.click(screen.getByRole("button", { name: "좋아요" }));
 
-    expect(await screen.findByText("준비 중입니다")).toBeInTheDocument();
+    // like 탭으로 전환되면 useMyReactionActivity('like') 결과(빈 배열)에 따라
+    // EmptyState 가 표시됨
+    expect(
+      await screen.findByText("좋아요 한 막걸리가 없어요"),
+    ).toBeInTheDocument();
   });
 
   it("when ?tab=comment is loaded, that tab is highlighted as active", async () => {

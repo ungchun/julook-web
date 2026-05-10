@@ -18,3 +18,14 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-w-10);
+  margin: var(--space-3) 0;
+}
