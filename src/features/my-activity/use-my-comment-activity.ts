@@ -1,21 +1,6 @@
-import { useEffect, useState } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { getOrCreateUserId } from "@/shared/lib/identity";
+import { useUserId } from "@/shared/lib/use-user-id";
 import { fetchMyComments, type MyCommentItem } from "./api";
-
-function useUserId(): string | undefined {
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    let alive = true;
-    getOrCreateUserId().then((id) => {
-      if (alive) setUserId(id);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return userId;
-}
 
 export function useMyCommentActivity(): UseQueryResult<MyCommentItem[], Error> {
   const userId = useUserId();

@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrCreateUserId } from "@/shared/lib/identity";
+import { useUserId } from "@/shared/lib/use-user-id";
 import type { ReactionType } from "@/shared/types";
 import {
   fetchUserReaction,
@@ -8,21 +7,6 @@ import {
   saveReaction,
   deleteReaction,
 } from "./api";
-
-// userId는 디바이스 단위이므로 한 번 로드 후 메모리 캐시.
-function useUserId(): string | undefined {
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    let alive = true;
-    getOrCreateUserId().then((id) => {
-      if (alive) setUserId(id);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return userId;
-}
 
 type UseReactionResult = {
   userReaction: ReactionType | null | undefined;
