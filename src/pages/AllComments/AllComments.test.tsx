@@ -6,6 +6,7 @@ import { renderWithProviders } from "@/test/utils";
 import { AllComments } from "./AllComments";
 
 const fetchAllPublicCommentsMock = vi.fn();
+const fetchUserReactionMock = vi.fn();
 
 vi.mock("@/features/recent-comments", () => ({
   useAllPublicComments: () => ({
@@ -16,6 +17,10 @@ vi.mock("@/features/recent-comments", () => ({
   fetchRecentComments: () => Promise.resolve([]),
   fetchAllPublicComments: () => fetchAllPublicCommentsMock(),
   useRecentComments: () => ({ data: undefined }),
+}));
+
+vi.mock("@/features/reaction/api", () => ({
+  fetchUserReaction: (...args: unknown[]) => fetchUserReactionMock(...args),
 }));
 
 // useAllPublicComments 가 useQuery 래핑이므로 fetch 결과를 직접 담는 hook 으로 모킹할 수 없음.
@@ -31,6 +36,7 @@ const useAllPublicCommentsDataRef: { current: unknown } = { current: undefined }
 beforeEach(() => {
   vi.clearAllMocks();
   useAllPublicCommentsDataRef.current = undefined;
+  fetchUserReactionMock.mockResolvedValue(null);
 });
 
 function makeItem(overrides: {
@@ -146,5 +152,36 @@ describe("AllComments page", () => {
     await user.click(screen.getByTestId("all-comments-row"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
+  });
+
+  it("renders reaction circle for each comment based on author reaction", async () => {
+    useAllPublicCommentsDataRef.current = [
+      makeItem({ commentId: "c_1", makgeolliId: "m_1" }),
+      makeItem({ commentId: "c_2", makgeolliId: "m_2", makgeolliName: "지평" }),
+    ];
+    fetchUserReactionMock.mockImplementation(
+      async (_userId: string, makgeolliId: string) => {
+        if (makgeolliId === "m_1") return "like";
+        return "dislike";
+      },
+    );
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/comments/all" element={<AllComments />} />
+      </Routes>,
+      { route: "/comments/all" },
+    );
+
+    const icons = await screen.findAllByTestId("comment-author-reaction");
+    expect(icons).toHaveLength(2);
+    expect(icons[0]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_like.svg",
+    );
+    expect(icons[1]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_dislike.svg",
+    );
   });
 });

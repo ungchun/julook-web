@@ -7,6 +7,7 @@ import { RecentCommentsSection } from "./RecentCommentsSection";
 
 // fetchRecentComments 단일 지점 모킹.
 const fetchRecentCommentsMock = vi.fn();
+const fetchUserReactionMock = vi.fn();
 
 vi.mock("./api", () => ({
   fetchRecentComments: () => fetchRecentCommentsMock(),
@@ -14,8 +15,13 @@ vi.mock("./api", () => ({
   fetchAllPublicComments: () => Promise.resolve([]),
 }));
 
+vi.mock("@/features/reaction/api", () => ({
+  fetchUserReaction: (...args: unknown[]) => fetchUserReactionMock(...args),
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
+  fetchUserReactionMock.mockResolvedValue(null);
   fetchRecentCommentsMock.mockResolvedValue([
     {
       comment: {
@@ -73,5 +79,18 @@ describe("RecentCommentsSection navigation", () => {
     expect(
       await screen.findByTestId("all-comments-target"),
     ).toBeInTheDocument();
+  });
+
+  it("renders reaction circle for each comment based on author reaction", async () => {
+    fetchUserReactionMock.mockResolvedValue("like");
+
+    renderWithProviders(<RecentCommentsSection />);
+
+    const icons = await screen.findAllByTestId("comment-author-reaction");
+    expect(icons[0]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_like.svg",
+    );
+    expect(fetchUserReactionMock).toHaveBeenCalledWith("u_1", "m_1");
   });
 });

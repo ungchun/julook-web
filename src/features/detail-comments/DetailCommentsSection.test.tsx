@@ -5,14 +5,20 @@ import { DetailCommentsSection } from "./DetailCommentsSection";
 import type { UserComment } from "@/shared/types";
 
 const fetchDetailCommentsMock = vi.fn();
+const fetchUserReactionMock = vi.fn();
 
 vi.mock("./api", () => ({
   fetchDetailComments: (...args: unknown[]) =>
     fetchDetailCommentsMock(...args),
 }));
 
+vi.mock("@/features/reaction/api", () => ({
+  fetchUserReaction: (...args: unknown[]) => fetchUserReactionMock(...args),
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
+  fetchUserReactionMock.mockResolvedValue(null);
 });
 
 const MAKGEOLLI_ID = "makgeolli-fixture-id";
@@ -84,5 +90,38 @@ describe("DetailCommentsSection", () => {
 
     expect(fetchDetailCommentsMock).not.toHaveBeenCalled();
     expect(screen.queryByTestId("detail-comments")).not.toBeInTheDocument();
+  });
+
+  it("renders reaction circle for each comment based on author reaction", async () => {
+    fetchDetailCommentsMock.mockResolvedValue([
+      makeComment({ id: "c1", user_id: "u_like" }),
+      makeComment({ id: "c2", user_id: "u_dislike" }),
+      makeComment({ id: "c3", user_id: "u_none" }),
+    ]);
+    fetchUserReactionMock.mockImplementation(async (userId: string) => {
+      if (userId === "u_like") return "like";
+      if (userId === "u_dislike") return "dislike";
+      return null;
+    });
+
+    renderWithProviders(
+      <DetailCommentsSection makgeolliId={MAKGEOLLI_ID} />,
+    );
+
+    await screen.findByTestId("detail-comments");
+    const icons = await screen.findAllByTestId("comment-author-reaction");
+    expect(icons).toHaveLength(3);
+    expect(icons[0]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_like.svg",
+    );
+    expect(icons[1]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_dislike.svg",
+    );
+    expect(icons[2]).toHaveAttribute(
+      "src",
+      "/assets/reaction/circle_none.svg",
+    );
   });
 });
