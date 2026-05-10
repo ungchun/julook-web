@@ -42,13 +42,6 @@
   border: 0;
 }
 
-.notFound {
-  font-size: var(--font-size-20);
-  color: var(--color-w-50);
-  text-align: center;
-  padding: var(--space-10) 0;
-}
-
 .header {
   display: flex;
   flex-direction: column;

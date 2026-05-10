@@ -9,6 +9,7 @@ import {
 } from "@/features/makgeolli-detail";
 import { ReactionButtons } from "@/features/reaction";
 import { DetailCommentsSection } from "@/features/detail-comments";
+import { EmptyState } from "@/shared/ui/EmptyState";
 import styles from "./Detail.module.css";
 
 // D2: id/이름/양조장/알콜/이미지 + not-found 분기.
@@ -45,7 +46,7 @@ export function Detail() {
         </button>
       </nav>
       {isSuccess && data === null ? (
-        <h1 className={styles.notFound}>막걸리를 찾을 수 없습니다</h1>
+        <EmptyState message="막걸리를 찾을 수 없습니다" />
       ) : data ? (
         <>
           <header className={styles.header}>

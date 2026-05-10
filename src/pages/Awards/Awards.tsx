@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MakgeolliCard } from "@/features/makgeolli-list";
 import { useAward, useMakgeollisByAward } from "@/features/awards";
 import { PageNav } from "@/shared/ui/PageNav";
+import { EmptyState } from "@/shared/ui/EmptyState";
 import styles from "./Awards.module.css";
 
 // /awards/:awardId — 특정 수상에 포함된 막걸리 리스트.
@@ -21,14 +22,12 @@ export function Awards() {
       <PageNav onClose={() => navigate(-1)} />
 
       {awardSucceeded && award == null && (
-        <p className={styles.empty}>수상 정보를 찾을 수 없습니다</p>
+        <EmptyState message="수상 정보를 찾을 수 없습니다" />
       )}
       {award != null && (
         <>
           <h1 className={styles.title}>{award.name}</h1>
-          {makgeollis?.length === 0 && (
-            <p className={styles.empty}>결과가 없어요</p>
-          )}
+          {makgeollis?.length === 0 && <EmptyState message="결과가 없어요" />}
           {makgeollis != null && makgeollis.length > 0 && (
             <div className={styles.list}>
               {makgeollis.map((m) => (

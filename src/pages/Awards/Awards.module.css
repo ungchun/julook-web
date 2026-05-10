@@ -17,9 +17,3 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
-.empty {
-  font-size: 14px;
-  color: var(--color-w-50);
-  margin-top: 16px;
-}

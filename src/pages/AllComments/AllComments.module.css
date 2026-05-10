@@ -22,9 +22,3 @@
   background-color: var(--color-w-10);
   margin: var(--space-3) 0;
 }
-
-.empty {
-  font-size: 14px;
-  color: var(--color-w-50);
-  margin-top: 16px;
-}
