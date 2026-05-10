@@ -10,6 +10,7 @@ import {
 import { ReactionButtons } from "@/features/reaction";
 import { DetailCommentsSection } from "@/features/detail-comments";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Detail.module.css";
 
 // D2: id/이름/양조장/알콜/이미지 + not-found 분기.
@@ -82,7 +83,7 @@ export function Detail() {
           <DetailCommentsSection makgeolliId={data.id} />
         </>
       ) : (
-        <h1 className={styles.name}>막걸리 상세</h1>
+        <LoadingState />
       )}
     </main>
   );

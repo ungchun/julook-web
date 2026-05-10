@@ -3,6 +3,7 @@ import { MakgeolliCard } from "@/features/makgeolli-list";
 import { useAward, useMakgeollisByAward } from "@/features/awards";
 import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Awards.module.css";
 
 // /awards/:awardId — 특정 수상에 포함된 막걸리 리스트.
@@ -11,8 +12,13 @@ import styles from "./Awards.module.css";
 export function Awards() {
   const { awardId } = useParams<{ awardId: string }>();
   const navigate = useNavigate();
-  const { data: award, isSuccess: awardSucceeded } = useAward(awardId);
-  const { data: makgeollis } = useMakgeollisByAward(award?.name);
+  const {
+    data: award,
+    isSuccess: awardSucceeded,
+    isLoading: awardLoading,
+  } = useAward(awardId);
+  const { data: makgeollis, isLoading: makgeollisLoading } =
+    useMakgeollisByAward(award?.name);
 
   return (
     <main
@@ -21,12 +27,14 @@ export function Awards() {
     >
       <PageNav onClose={() => navigate(-1)} />
 
+      {awardLoading && <LoadingState />}
       {awardSucceeded && award == null && (
         <EmptyState message="수상 정보를 찾을 수 없습니다" />
       )}
       {award != null && (
         <>
           <h1 className={styles.title}>{award.name}</h1>
+          {makgeollisLoading && <LoadingState />}
           {makgeollis?.length === 0 && <EmptyState message="결과가 없어요" />}
           {makgeollis != null && makgeollis.length > 0 && (
             <div className={styles.list}>
