@@ -50,13 +50,11 @@ describe("useCommentAuthorReactions", () => {
   });
 
   it("returns map with reaction type by comment id", async () => {
-    fetchUserReactionMock.mockImplementation(
-      async (userId: string, _makgeolliId: string) => {
-        if (userId === "u_1") return "like";
-        if (userId === "u_2") return "dislike";
-        return null;
-      },
-    );
+    fetchUserReactionMock.mockImplementation(async (userId: string) => {
+      if (userId === "u_1") return "like";
+      if (userId === "u_2") return "dislike";
+      return null;
+    });
 
     const { result } = renderHook(() => useCommentAuthorReactions(COMMENTS), {
       wrapper: makeWrapper(),
