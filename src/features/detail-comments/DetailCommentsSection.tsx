@@ -1,18 +1,13 @@
 import { Fragment } from "react";
 import { formatDateYMD } from "@/shared/lib/format-date";
 import { useCommentAuthorReactions } from "@/features/reaction";
+import { reactionCircleIconSrc } from "@/features/reaction/icon";
 import { useDetailComments } from "./use-detail-comments";
 import styles from "./DetailCommentsSection.module.css";
 
 type Props = {
   makgeolliId: string | undefined;
 };
-
-function reactionIconSrc(type: "like" | "dislike" | null): string {
-  if (type === "like") return "/assets/reaction/circle_like.svg";
-  if (type === "dislike") return "/assets/reaction/circle_dislike.svg";
-  return "/assets/reaction/circle_none.svg";
-}
 
 // 상세 페이지 하단 공개 코멘트 섹션. iOS InformationView+Evaluation.publicCommentsStrip /
 // AllCommentsSheetView 의 단순화 버전 — 본문 + 작성일 + 작성자 reaction circle.
@@ -37,7 +32,7 @@ export function DetailCommentsSection({ makgeolliId }: Props) {
                 <img
                   data-testid="comment-author-reaction"
                   className={styles.reactionIcon}
-                  src={reactionIconSrc(reactionType)}
+                  src={reactionCircleIconSrc(reactionType)}
                   alt=""
                 />
                 <p className={styles.comment}>{c.comment}</p>

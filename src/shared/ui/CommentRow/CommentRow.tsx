@@ -1,6 +1,7 @@
 import type { Makgeolli, ReactionType, UserComment } from "@/shared/types";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
 import { formatDateYMD } from "@/shared/lib/format-date";
+import { reactionCircleIconSrc } from "@/features/reaction/icon";
 import styles from "./CommentRow.module.css";
 
 type Props = {
@@ -14,12 +15,6 @@ type Props = {
   /** 작성자 reaction. undefined → 아이콘 미표시, null → circle_none, 'like'/'dislike' → 해당 아이콘. */
   reactionType?: ReactionType | null;
 };
-
-function reactionIconSrc(type: ReactionType | null): string {
-  if (type === "like") return "/assets/reaction/circle_like.svg";
-  if (type === "dislike") return "/assets/reaction/circle_dislike.svg";
-  return "/assets/reaction/circle_none.svg";
-}
 
 // RecentCommentsSection / AllComments 공통 row.
 // 단일 막걸리 페이지의 DetailCommentsSection 은 다른 구조라 흡수 안 함.
@@ -51,7 +46,7 @@ export function CommentRow({
             <img
               data-testid="comment-author-reaction"
               className={styles.reactionIcon}
-              src={reactionIconSrc(reactionType)}
+              src={reactionCircleIconSrc(reactionType)}
               alt=""
             />
           )}
