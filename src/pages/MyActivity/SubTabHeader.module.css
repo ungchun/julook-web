@@ -1,0 +1,31 @@
+.row {
+  display: flex;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--color-w-10);
+}
+
+.tab,
+.tabActive {
+  background: transparent;
+  border: 0;
+  padding: var(--space-3) 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  color: var(--color-w-50);
+}
+
+.tabActive {
+  color: var(--color-w);
+}
+
+.tabActive::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background-color: var(--color-w);
+}
