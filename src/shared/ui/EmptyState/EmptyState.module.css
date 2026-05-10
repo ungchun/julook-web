@@ -1,0 +1,21 @@
+/* iOS EmptyView 미러 — VStack(spacing 20) { Text .w50 .SF17R; searchJulook 140px } */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: var(--space-10) 0;
+}
+
+.message {
+  font-size: 17px;
+  color: var(--color-w-50);
+  text-align: center;
+}
+
+.illustration {
+  height: 140px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
