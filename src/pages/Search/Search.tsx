@@ -7,10 +7,14 @@ import {
   useSearch,
 } from "@/features/search";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
+import { usePaginatedList } from "@/shared/lib/use-paginated-list";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
+import { InfiniteListSentinel } from "@/shared/ui/InfiniteListSentinel";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Search.module.css";
+
+const SEARCH_PAGE_SIZE = 20;
 
 // iOS SearchView 미러 — 1차(입력+디바운스+결과) + 2차(최근 검색어 영속화).
 // search_makgeolli_flexible RPC 사용, 300ms debounce.
@@ -21,6 +25,11 @@ export function Search() {
   const { data, isLoading, isError, refetch } = useSearch(debouncedQuery);
   const recent = useRecentSearches();
   const navigate = useNavigate();
+  const results = data ?? [];
+  const { displayed, hasMore, loadMore } = usePaginatedList(
+    results,
+    SEARCH_PAGE_SIZE,
+  );
 
   const goDetail = (id: string) => {
     void recent.add(debouncedQuery);
@@ -74,13 +83,14 @@ export function Search() {
       )}
       {data != null && data.length > 0 && (
         <div className={styles.list}>
-          {data.map((m) => (
+          {displayed.map((m) => (
             <MakgeolliCard
               key={m.id}
               makgeolli={m}
               onClick={() => goDetail(m.id)}
             />
           ))}
+          {hasMore && <InfiniteListSentinel onIntersect={loadMore} />}
         </div>
       )}
     </main>

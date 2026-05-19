@@ -204,6 +204,53 @@ describe("Search page", () => {
     expect(await screen.findByTestId("makgeolli-card")).toBeInTheDocument();
   });
 
+  it("when search returns 100 results, only first 20 cards are rendered", async () => {
+    const fixtures = Array.from({ length: 100 }, (_, i) =>
+      makeMakgeolli(`m_${i}`, `막걸리_${i}`),
+    );
+    useSearchRef.current = (q: string) =>
+      q === "느린"
+        ? { data: fixtures, isLoading: false }
+        : { data: undefined, isLoading: false };
+    const user = userEvent.setup();
+
+    renderWithProviders(<Search />);
+    await user.type(screen.getByRole("searchbox"), "느린");
+
+    const cards = await screen.findAllByTestId("makgeolli-card");
+    expect(cards).toHaveLength(20);
+    expect(screen.getByTestId("infinite-sentinel")).toBeInTheDocument();
+  });
+
+  it("when query changes, page resets to first 20", async () => {
+    const fixturesA = Array.from({ length: 50 }, (_, i) =>
+      makeMakgeolli(`a_${i}`, `A_${i}`),
+    );
+    const fixturesB = Array.from({ length: 30 }, (_, i) =>
+      makeMakgeolli(`b_${i}`, `B_${i}`),
+    );
+    useSearchRef.current = (q: string) => {
+      if (q === "A") return { data: fixturesA, isLoading: false };
+      if (q === "B") return { data: fixturesB, isLoading: false };
+      return { data: undefined, isLoading: false };
+    };
+    const user = userEvent.setup();
+
+    renderWithProviders(<Search />);
+    const input = screen.getByRole("searchbox") as HTMLInputElement;
+    await user.type(input, "A");
+    await waitFor(() =>
+      expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(20),
+    );
+
+    await user.clear(input);
+    await user.type(input, "B");
+    await waitFor(() => {
+      expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(20);
+      expect(screen.getByText("B_0")).toBeInTheDocument();
+    });
+  });
+
   it("clicking a card adds the current query to recent searches", async () => {
     const user = userEvent.setup();
     useSearchRef.current = (q: string) =>
