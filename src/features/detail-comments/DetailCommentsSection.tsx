@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { formatDateYMD } from "@/shared/lib/format-date";
 import { useCommentAuthorReactions } from "@/features/reaction";
 import { reactionCircleIconSrc } from "@/features/reaction/icon";
+import { CommentRowSkeleton } from "@/shared/ui/CommentRowSkeleton";
 import { useDetailComments } from "./use-detail-comments";
 import styles from "./DetailCommentsSection.module.css";
 
@@ -12,9 +13,17 @@ type Props = {
 // 상세 페이지 하단 공개 코멘트 섹션. iOS InformationView+Evaluation.publicCommentsStrip /
 // AllCommentsSheetView 의 단순화 버전 — 본문 + 작성일 + 작성자 reaction circle.
 export function DetailCommentsSection({ makgeolliId }: Props) {
-  const { data } = useDetailComments(makgeolliId);
+  const { data, isLoading } = useDetailComments(makgeolliId);
   const { data: reactions } = useCommentAuthorReactions(data);
 
+  if (isLoading) {
+    return (
+      <section className={styles.section}>
+        <h2 className={styles.title}>코멘트</h2>
+        <CommentRowSkeleton count={3} />
+      </section>
+    );
+  }
   if (!data || data.length === 0) return null;
 
   return (

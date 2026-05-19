@@ -69,17 +69,28 @@ describe("DetailCommentsSection", () => {
   it("when comments list is empty, renders nothing", async () => {
     fetchDetailCommentsMock.mockResolvedValue([]);
 
-    const { container } = renderWithProviders(
-      <DetailCommentsSection makgeolliId={MAKGEOLLI_ID} />,
-    );
+    renderWithProviders(<DetailCommentsSection makgeolliId={MAKGEOLLI_ID} />);
 
-    // 비동기 fetch 완료 대기 — 호출 자체는 일어나야 함
+    // fetch 완료 + skeleton 사라질 때까지 대기
     await vi.waitFor(() => {
       expect(fetchDetailCommentsMock).toHaveBeenCalled();
+      expect(
+        screen.queryByTestId("comment-skeleton-row"),
+      ).not.toBeInTheDocument();
     });
 
     expect(screen.queryByTestId("detail-comments")).not.toBeInTheDocument();
-    expect(container.textContent).toBe("");
+  });
+
+  it("while loading, renders CommentRowSkeleton", async () => {
+    // 영원히 resolve 되지 않는 promise — isLoading true 유지
+    fetchDetailCommentsMock.mockImplementation(() => new Promise(() => {}));
+
+    renderWithProviders(<DetailCommentsSection makgeolliId={MAKGEOLLI_ID} />);
+
+    expect(
+      await screen.findAllByTestId("comment-skeleton-row"),
+    ).not.toHaveLength(0);
   });
 
   it("when makgeolliId is undefined, does not call supabase fetch", async () => {

@@ -28,14 +28,19 @@ vi.mock("@/features/reaction/api", () => ({
 vi.mock("@/features/recent-comments/use-all-public-comments", () => ({
   useAllPublicComments: () => ({
     data: useAllPublicCommentsDataRef.current,
+    isLoading: useAllPublicCommentsLoadingRef.current,
+    isError: false,
+    refetch: () => {},
   }),
 }));
 
 const useAllPublicCommentsDataRef: { current: unknown } = { current: undefined };
+const useAllPublicCommentsLoadingRef: { current: boolean } = { current: false };
 
 beforeEach(() => {
   vi.clearAllMocks();
   useAllPublicCommentsDataRef.current = undefined;
+  useAllPublicCommentsLoadingRef.current = false;
   fetchUserReactionMock.mockResolvedValue(null);
 });
 
@@ -116,6 +121,23 @@ describe("AllComments page", () => {
     expect(screen.getByText("2025년 4월 1일")).toBeInTheDocument();
 
     expect(screen.getAllByTestId("all-comments-row")).toHaveLength(2);
+  });
+
+  it("when loading, renders CommentRowSkeleton instead of spinner", async () => {
+    useAllPublicCommentsDataRef.current = undefined;
+    useAllPublicCommentsLoadingRef.current = true;
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/comments/all" element={<AllComments />} />
+      </Routes>,
+      { route: "/comments/all" },
+    );
+
+    expect(
+      await screen.findAllByTestId("comment-skeleton-row"),
+    ).not.toHaveLength(0);
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
   });
 
   it("when comments are empty, renders empty message", async () => {
