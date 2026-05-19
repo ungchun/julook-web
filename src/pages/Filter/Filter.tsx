@@ -6,6 +6,7 @@ import {
 } from "@/features/filter";
 import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Filter.module.css";
 
@@ -15,7 +16,9 @@ export function Filter() {
   const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
   const meta = type != null ? getFilterMeta(type) : undefined;
-  const { data, isLoading } = useFilteredMakgeollis(meta?.slug);
+  const { data, isLoading, isError, refetch } = useFilteredMakgeollis(
+    meta?.slug,
+  );
 
   return (
     <main
@@ -29,7 +32,10 @@ export function Filter() {
         <>
           <h1 className={styles.title}>{meta.label}</h1>
           {isLoading && <LoadingState />}
-          {data?.length === 0 && <EmptyState message="결과가 없어요" />}
+          {isError && <ErrorState onRetry={() => refetch()} />}
+          {!isError && data?.length === 0 && (
+            <EmptyState message="결과가 없어요" />
+          )}
           {data != null && data.length > 0 && (
             <div className={styles.list}>
               {data.map((m) => (

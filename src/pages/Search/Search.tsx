@@ -4,6 +4,7 @@ import { MakgeolliCard } from "@/features/makgeolli-list";
 import { useSearch } from "@/features/search";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Search.module.css";
 
@@ -12,7 +13,7 @@ import styles from "./Search.module.css";
 export function Search() {
   const [rawQuery, setRawQuery] = useState("");
   const debouncedQuery = useDebouncedValue(rawQuery.trim(), 300);
-  const { data, isLoading } = useSearch(debouncedQuery);
+  const { data, isLoading, isError, refetch } = useSearch(debouncedQuery);
   const navigate = useNavigate();
 
   return (
@@ -42,7 +43,10 @@ export function Search() {
         <EmptyState message="막걸리 이름을 검색해 보세요" />
       )}
       {debouncedQuery.length > 0 && isLoading && <LoadingState />}
-      {debouncedQuery.length > 0 && data?.length === 0 && (
+      {debouncedQuery.length > 0 && isError && (
+        <ErrorState onRetry={() => refetch()} />
+      )}
+      {debouncedQuery.length > 0 && !isError && data?.length === 0 && (
         <EmptyState message="검색 결과가 없어요" />
       )}
       {data != null && data.length > 0 && (

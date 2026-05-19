@@ -13,7 +13,12 @@ vi.mock("@/features/search", () => ({
 }));
 
 const useSearchRef: {
-  current: (query: string) => { data: unknown; isLoading: boolean };
+  current: (query: string) => {
+    data: unknown;
+    isLoading: boolean;
+    isError?: boolean;
+    refetch?: () => void;
+  };
 } = {
   current: () => ({ data: undefined, isLoading: false }),
 };
@@ -108,6 +113,28 @@ describe("Search page", () => {
     expect(
       screen.getByText("막걸리 이름을 검색해 보세요"),
     ).toBeInTheDocument();
+  });
+
+  it("when useSearch errors, renders ErrorState with retry button that triggers refetch", async () => {
+    const user = userEvent.setup();
+    const refetch = vi.fn();
+    useSearchRef.current = () => ({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      refetch,
+    });
+
+    renderWithProviders(<Search />);
+
+    await user.type(screen.getByRole("searchbox"), "abc");
+
+    expect(
+      await screen.findByText("잠시 후 다시 시도해주세요"),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "다시 시도" }));
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 
   it("when card clicked, navigates to /makgeolli/:id", async () => {

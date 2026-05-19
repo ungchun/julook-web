@@ -5,13 +5,14 @@ import { useCommentAuthorReactions } from "@/features/reaction";
 import { useAllPublicComments } from "@/features/recent-comments/use-all-public-comments";
 import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./AllComments.module.css";
 
 // /comments/all — 전 막걸리 대상 공개 코멘트 페이지.
 // iOS CommentListView 미러. 1단계: 페이지네이션 보류.
 export function AllComments() {
-  const { data, isLoading } = useAllPublicComments();
+  const { data, isLoading, isError, refetch } = useAllPublicComments();
   const navigate = useNavigate();
   const { data: reactions } = useCommentAuthorReactions(
     data?.map((item) => item.comment),
@@ -27,7 +28,10 @@ export function AllComments() {
       <h1 className={styles.title}>코멘트가 달렸어요</h1>
 
       {isLoading && <LoadingState />}
-      {data?.length === 0 && <EmptyState message="공개된 코멘트가 없어요" />}
+      {isError && <ErrorState onRetry={() => refetch()} />}
+      {!isError && data?.length === 0 && (
+        <EmptyState message="공개된 코멘트가 없어요" />
+      )}
       {data != null && data.length > 0 && (
         <div className={styles.list}>
           {data.map((item, idx) => (

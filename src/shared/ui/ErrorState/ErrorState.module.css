@@ -1,0 +1,37 @@
+/* EmptyState 와 동일 레이아웃 + 재시도 버튼 추가 슬롯. */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: var(--space-10) 0;
+}
+
+.message {
+  font-size: 17px;
+  color: var(--color-w-50);
+  text-align: center;
+}
+
+.illustration {
+  height: 140px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.retry {
+  appearance: none;
+  border: none;
+  background: var(--color-alert);
+  color: var(--color-w);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.retry:active {
+  opacity: 0.8;
+}

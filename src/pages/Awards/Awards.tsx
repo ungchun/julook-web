@@ -3,6 +3,7 @@ import { MakgeolliCard } from "@/features/makgeolli-list";
 import { useAward, useMakgeollisByAward } from "@/features/awards";
 import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Awards.module.css";
 
@@ -16,9 +17,20 @@ export function Awards() {
     data: award,
     isSuccess: awardSucceeded,
     isLoading: awardLoading,
+    isError: awardError,
+    refetch: refetchAward,
   } = useAward(awardId);
-  const { data: makgeollis, isLoading: makgeollisLoading } =
-    useMakgeollisByAward(award?.name);
+  const {
+    data: makgeollis,
+    isLoading: makgeollisLoading,
+    isError: makgeollisError,
+    refetch: refetchMakgeollis,
+  } = useMakgeollisByAward(award?.name);
+  const hasError = awardError || makgeollisError;
+  const retry = () => {
+    if (awardError) refetchAward();
+    if (makgeollisError) refetchMakgeollis();
+  };
 
   return (
     <main
@@ -28,10 +40,11 @@ export function Awards() {
       <PageNav onClose={() => navigate(-1)} />
 
       {awardLoading && <LoadingState />}
-      {awardSucceeded && award == null && (
+      {hasError && <ErrorState onRetry={retry} />}
+      {!hasError && awardSucceeded && award == null && (
         <EmptyState message="수상 정보를 찾을 수 없습니다" />
       )}
-      {award != null && (
+      {!hasError && award != null && (
         <>
           <h1 className={styles.title}>{award.name}</h1>
           {makgeollisLoading && <LoadingState />}

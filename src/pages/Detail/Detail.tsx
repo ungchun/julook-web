@@ -10,6 +10,7 @@ import {
 import { ReactionButtons } from "@/features/reaction";
 import { DetailCommentsSection } from "@/features/detail-comments";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Detail.module.css";
 
@@ -19,7 +20,7 @@ import styles from "./Detail.module.css";
 export function Detail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data, isSuccess } = useMakgeolli(id);
+  const { data, isSuccess, isError, refetch } = useMakgeolli(id);
 
   const imageUrl =
     data?.image_name != null ? getMakgeolliImageUrl(data.image_name) : null;
@@ -46,7 +47,9 @@ export function Detail() {
           />
         </button>
       </nav>
-      {isSuccess && data === null ? (
+      {isError ? (
+        <ErrorState onRetry={() => refetch()} />
+      ) : isSuccess && data === null ? (
         <EmptyState message="막걸리를 찾을 수 없습니다" />
       ) : data ? (
         <>

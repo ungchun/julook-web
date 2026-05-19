@@ -8,6 +8,7 @@ import {
 } from "@/features/my-activity";
 import { CommentRow } from "@/shared/ui/CommentRow";
 import { EmptyState } from "@/shared/ui/EmptyState";
+import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import { SubTabHeader, type ActivityTab } from "./SubTabHeader";
 import styles from "./MyActivity.module.css";
@@ -23,6 +24,8 @@ function parseTab(raw: string | null): ActivityTab {
 
 type CardPaneProps = {
   isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
   items:
     | { makgeolli: { id: string; name: string } }[]
     | undefined;
@@ -30,7 +33,15 @@ type CardPaneProps = {
   onCardClick: (id: string) => void;
 };
 
-function CardPane({ isLoading, items, emptyMessage, onCardClick }: CardPaneProps) {
+function CardPane({
+  isLoading,
+  isError,
+  onRetry,
+  items,
+  emptyMessage,
+  onCardClick,
+}: CardPaneProps) {
+  if (isError) return <ErrorState onRetry={onRetry} />;
   if (isLoading) return <LoadingState />;
   if (items?.length === 0) return <EmptyState message={emptyMessage} />;
   if (items != null && items.length > 0) {
@@ -81,6 +92,8 @@ export function MyActivity() {
       {selected === "all" && (
         <CardPane
           isLoading={all.isLoading}
+          isError={all.isError}
+          onRetry={() => all.refetch()}
           items={all.data}
           emptyMessage="활동 기록이 없어요"
           onCardClick={goDetail}
@@ -89,6 +102,8 @@ export function MyActivity() {
       {selected === "like" && (
         <CardPane
           isLoading={liked.isLoading}
+          isError={liked.isError}
+          onRetry={() => liked.refetch()}
           items={liked.data}
           emptyMessage="좋아요 한 막걸리가 없어요"
           onCardClick={goDetail}
@@ -97,6 +112,8 @@ export function MyActivity() {
       {selected === "dislike" && (
         <CardPane
           isLoading={disliked.isLoading}
+          isError={disliked.isError}
+          onRetry={() => disliked.refetch()}
           items={disliked.data}
           emptyMessage="싫어요 한 막걸리가 없어요"
           onCardClick={goDetail}
@@ -104,11 +121,12 @@ export function MyActivity() {
       )}
       {selected === "comment" && (
         <>
-          {comments.isLoading && <LoadingState />}
-          {comments.data?.length === 0 && (
+          {comments.isError && <ErrorState onRetry={() => comments.refetch()} />}
+          {!comments.isError && comments.isLoading && <LoadingState />}
+          {!comments.isError && comments.data?.length === 0 && (
             <EmptyState message="작성한 코멘트가 없어요" />
           )}
-          {comments.data != null && comments.data.length > 0 && (
+          {!comments.isError && comments.data != null && comments.data.length > 0 && (
             <div className={styles.commentList}>
               {comments.data.map((item, idx) => (
                 <Fragment key={item.comment.id}>
