@@ -1,0 +1,60 @@
+/* MakgeolliCard 와 동일 외형(104×240, dark-gray)의 placeholder.
+   container 는 호출 측 .list (가로 스크롤)에 직접 들어가도 영향 없도록 flex row 사용. */
+.container {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 104px;
+  height: 240px;
+  padding: var(--space-5);
+  background-color: var(--color-dark-gray);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.imageBox {
+  width: 50px;
+  height: 114px;
+  margin: 0 auto;
+  background-color: var(--color-w-25);
+  border-radius: 4px;
+}
+
+.nameBar {
+  width: 60%;
+  height: 12px;
+  margin: 0 auto;
+  background-color: var(--color-w-25);
+  border-radius: 4px;
+}
+
+.tasteRow {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.tasteCell {
+  width: 12px;
+  height: 16px;
+  background-color: var(--color-w-25);
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}

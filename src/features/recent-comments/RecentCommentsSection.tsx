@@ -1,18 +1,27 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { CommentRow } from "@/shared/ui/CommentRow";
+import { CommentRowSkeleton } from "@/shared/ui/CommentRowSkeleton";
 import { useCommentAuthorReactions } from "@/features/reaction";
 import { useRecentComments } from "./use-recent-comments";
 import styles from "./RecentCommentsSection.module.css";
 
 // iOS RecentCommentsView 미러 — "코멘트가 달렸어요 >" + 최근 공개 코멘트 4개.
 export function RecentCommentsSection() {
-  const { data } = useRecentComments();
+  const { data, isLoading } = useRecentComments();
   const navigate = useNavigate();
   const { data: reactions } = useCommentAuthorReactions(
     data?.map((item) => item.comment),
   );
 
+  if (isLoading) {
+    return (
+      <section data-testid="recent-comments-section" className={styles.section}>
+        <h2 className={styles.title}>코멘트가 달렸어요</h2>
+        <CommentRowSkeleton count={4} />
+      </section>
+    );
+  }
   if (!data || data.length === 0) return null;
 
   return (

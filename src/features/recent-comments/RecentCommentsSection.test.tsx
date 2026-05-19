@@ -59,6 +59,18 @@ function AllCommentsTargetProbe() {
 }
 
 describe("RecentCommentsSection navigation", () => {
+  it("while loading, renders CommentRowSkeleton", async () => {
+    fetchRecentCommentsMock.mockImplementation(
+      () => new Promise(() => {}),
+    );
+
+    renderWithProviders(<RecentCommentsSection />);
+
+    expect(
+      await screen.findAllByTestId("comment-skeleton-row"),
+    ).not.toHaveLength(0);
+  });
+
   it("when section header is clicked, navigates to /comments/all", async () => {
     const user = userEvent.setup();
 
