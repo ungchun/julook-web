@@ -3,6 +3,7 @@ import { formatDateYMD } from "@/shared/lib/format-date";
 import { useCommentAuthorReactions } from "@/features/reaction";
 import { reactionCircleIconSrc } from "@/features/reaction/icon";
 import { CommentRowSkeleton } from "@/shared/ui/CommentRowSkeleton";
+import { EmptyState } from "@/shared/ui/EmptyState";
 import { useDetailComments } from "./use-detail-comments";
 import styles from "./DetailCommentsSection.module.css";
 
@@ -16,6 +17,7 @@ export function DetailCommentsSection({ makgeolliId }: Props) {
   const { data, isLoading } = useDetailComments(makgeolliId);
   const { data: reactions } = useCommentAuthorReactions(data);
 
+  if (makgeolliId == null) return null;
   if (isLoading) {
     return (
       <section className={styles.section}>
@@ -24,7 +26,14 @@ export function DetailCommentsSection({ makgeolliId }: Props) {
       </section>
     );
   }
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return (
+      <section data-testid="detail-comments" className={styles.section}>
+        <h2 className={styles.title}>코멘트</h2>
+        <EmptyState message="아직 작성된 코멘트가 없어요" />
+      </section>
+    );
+  }
 
   return (
     <section data-testid="detail-comments" className={styles.section}>

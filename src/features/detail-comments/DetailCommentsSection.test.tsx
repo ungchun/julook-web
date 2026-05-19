@@ -66,20 +66,20 @@ describe("DetailCommentsSection", () => {
     expect(fetchDetailCommentsMock).toHaveBeenCalledWith(MAKGEOLLI_ID);
   });
 
-  it("when comments list is empty, renders nothing", async () => {
+  it("when comments list is empty, renders empty state with title", async () => {
     fetchDetailCommentsMock.mockResolvedValue([]);
 
     renderWithProviders(<DetailCommentsSection makgeolliId={MAKGEOLLI_ID} />);
 
-    // fetch 완료 + skeleton 사라질 때까지 대기
-    await vi.waitFor(() => {
-      expect(fetchDetailCommentsMock).toHaveBeenCalled();
-      expect(
-        screen.queryByTestId("comment-skeleton-row"),
-      ).not.toBeInTheDocument();
-    });
-
-    expect(screen.queryByTestId("detail-comments")).not.toBeInTheDocument();
+    expect(
+      await screen.findByText("아직 작성된 코멘트가 없어요"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "코멘트" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("detail-comment-item"),
+    ).not.toBeInTheDocument();
   });
 
   it("while loading, renders CommentRowSkeleton", async () => {
