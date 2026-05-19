@@ -1,15 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { renderWithProviders } from "@/test/utils";
 import { Search } from "./Search";
 
 const searchMakgeollisMock = vi.fn();
+const loadRecentSearchesMock = vi.fn();
+const saveRecentSearchesMock = vi.fn();
 
-vi.mock("@/features/search", () => ({
-  searchMakgeollis: (...args: unknown[]) => searchMakgeollisMock(...args),
-  useSearch: (query: string) => useSearchRef.current(query),
+vi.mock("@/features/search", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/features/search")>();
+  return {
+    ...actual,
+    searchMakgeollis: (...args: unknown[]) => searchMakgeollisMock(...args),
+    useSearch: (query: string) => useSearchRef.current(query),
+  };
+});
+
+vi.mock("@/shared/lib/recent-searches", () => ({
+  loadRecentSearches: () => loadRecentSearchesMock(),
+  saveRecentSearches: (items: string[]) => saveRecentSearchesMock(items),
 }));
 
 const useSearchRef: {
@@ -26,6 +38,8 @@ const useSearchRef: {
 beforeEach(() => {
   vi.clearAllMocks();
   useSearchRef.current = () => ({ data: undefined, isLoading: false });
+  loadRecentSearchesMock.mockResolvedValue([]);
+  saveRecentSearchesMock.mockResolvedValue(undefined);
 });
 
 function makeMakgeolli(id: string, name: string) {
@@ -156,5 +170,65 @@ describe("Search page", () => {
     await user.click(screen.getByTestId("makgeolli-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
+  });
+
+  it("when query is empty and recent searches exist, renders the list (not EmptyState)", async () => {
+    loadRecentSearchesMock.mockResolvedValueOnce(["느린마을", "지평"]);
+
+    renderWithProviders(<Search />);
+
+    expect(
+      await screen.findByRole("heading", { name: "최근 검색어" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("느린마을")).toBeInTheDocument();
+    expect(screen.getByText("지평")).toBeInTheDocument();
+    expect(
+      screen.queryByText("막걸리 이름을 검색해 보세요"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("clicking a recent search item fills the input and triggers search", async () => {
+    loadRecentSearchesMock.mockResolvedValueOnce(["느린마을"]);
+    useSearchRef.current = (q: string) =>
+      q === "느린마을"
+        ? { data: [makeMakgeolli("m_1", "느린마을")], isLoading: false }
+        : { data: undefined, isLoading: false };
+    const user = userEvent.setup();
+
+    renderWithProviders(<Search />);
+
+    await user.click(await screen.findByText("느린마을"));
+    expect(
+      (screen.getByRole("searchbox") as HTMLInputElement).value,
+    ).toBe("느린마을");
+    expect(await screen.findByTestId("makgeolli-card")).toBeInTheDocument();
+  });
+
+  it("clicking a card adds the current query to recent searches", async () => {
+    const user = userEvent.setup();
+    useSearchRef.current = (q: string) =>
+      q === "느린"
+        ? { data: [makeMakgeolli("m_1", "느린마을")], isLoading: false }
+        : { data: undefined, isLoading: false };
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<Search />} />
+        <Route path="/makgeolli/:id" element={<DetailProbe />} />
+      </Routes>,
+    );
+
+    // 초기 마운트 — useRecentSearches 가 loadRecentSearches() 호출 → 빈 배열로 resolve
+    await waitFor(() => {
+      expect(loadRecentSearchesMock).toHaveBeenCalled();
+    });
+
+    await user.type(screen.getByRole("searchbox"), "느린");
+    await screen.findByText("느린마을");
+    await user.click(screen.getByTestId("makgeolli-card"));
+
+    await waitFor(() => {
+      expect(saveRecentSearchesMock).toHaveBeenCalledWith(["느린"]);
+    });
   });
 });

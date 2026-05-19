@@ -1,20 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MakgeolliCard } from "@/features/makgeolli-list";
-import { useSearch } from "@/features/search";
+import {
+  RecentSearches,
+  useRecentSearches,
+  useSearch,
+} from "@/features/search";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import styles from "./Search.module.css";
 
-// iOS SearchView 1차 단순화 — 최근 검색어/Cancel/focus 처리는 비범위 (후속 사이클).
+// iOS SearchView 미러 — 1차(입력+디바운스+결과) + 2차(최근 검색어 영속화).
 // search_makgeolli_flexible RPC 사용, 300ms debounce.
+// 최근 검색어는 카드 클릭 시점에 add() — "이 검색어로 탐색했다"는 명확한 의도.
 export function Search() {
   const [rawQuery, setRawQuery] = useState("");
   const debouncedQuery = useDebouncedValue(rawQuery.trim(), 300);
   const { data, isLoading, isError, refetch } = useSearch(debouncedQuery);
+  const recent = useRecentSearches();
   const navigate = useNavigate();
+
+  const goDetail = (id: string) => {
+    void recent.add(debouncedQuery);
+    navigate(`/makgeolli/${id}`);
+  };
 
   return (
     <main className={styles.main}>
@@ -39,7 +50,19 @@ export function Search() {
         )}
       </div>
 
-      {debouncedQuery.length === 0 && (
+      {debouncedQuery.length === 0 && recent.items.length > 0 && (
+        <RecentSearches
+          items={recent.items}
+          onSelect={(keyword) => setRawQuery(keyword)}
+          onRemove={(idx) => {
+            void recent.removeAt(idx);
+          }}
+          onClearAll={() => {
+            void recent.clearAll();
+          }}
+        />
+      )}
+      {debouncedQuery.length === 0 && recent.items.length === 0 && (
         <EmptyState message="막걸리 이름을 검색해 보세요" />
       )}
       {debouncedQuery.length > 0 && isLoading && <LoadingState />}
@@ -55,7 +78,7 @@ export function Search() {
             <MakgeolliCard
               key={m.id}
               makgeolli={m}
-              onClick={() => navigate(`/makgeolli/${m.id}`)}
+              onClick={() => goDetail(m.id)}
             />
           ))}
         </div>
