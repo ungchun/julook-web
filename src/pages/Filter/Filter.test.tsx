@@ -6,7 +6,9 @@ import { renderWithProviders } from "@/test/utils";
 import { Filter } from "./Filter";
 import type { Makgeolli } from "@/shared/types";
 
-// supabase chain 모킹
+// supabase chain 모킹 — 페이지네이션 chain:
+// from → select → (predicate*) → order(id) → order(created_at) → range → Promise
+const rangeMock = vi.fn();
 const orderCreatedAtMock = vi.fn();
 const orderIdMock = vi.fn();
 const predicateMock = vi.fn();
@@ -29,9 +31,19 @@ vi.mock("@/shared/lib/supabase", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   fromMock.mockReturnValue({ select: selectMock });
-  selectMock.mockReturnValue({ gte: predicateMock, eq: predicateMock });
-  predicateMock.mockReturnValue({ order: orderIdMock });
+  selectMock.mockReturnValue({
+    gte: predicateMock,
+    eq: predicateMock,
+    order: orderIdMock,
+  });
+  predicateMock.mockReturnValue({
+    gte: predicateMock,
+    eq: predicateMock,
+    order: orderIdMock,
+  });
   orderIdMock.mockReturnValue({ order: orderCreatedAtMock });
+  orderCreatedAtMock.mockReturnValue({ range: rangeMock });
+  rangeMock.mockResolvedValue({ data: [], error: null });
 });
 
 function makeMakgeolli(overrides: Partial<Makgeolli> = {}): Makgeolli {
@@ -61,7 +73,7 @@ function DetailProbe() {
 
 describe("Filter page", () => {
   it("when /filter/thick is loaded, renders '걸쭉한' title and fetches with thickness gte 3", async () => {
-    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+    rangeMock.mockResolvedValue({ data: [], error: null });
 
     renderWithProviders(
       <Routes>
@@ -82,9 +94,7 @@ describe("Filter page", () => {
   });
 
   it("/filter (type 없음) 진입 시 칩 모두 비활성 + 전체 fetch (predicate 호출 0)", async () => {
-    // 0 slugs인 경우 select → 바로 order 체인
-    selectMock.mockReturnValue({ order: orderIdMock });
-    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+    rangeMock.mockResolvedValue({ data: [], error: null });
 
     renderWithProviders(
       <Routes>
@@ -111,7 +121,7 @@ describe("Filter page", () => {
   });
 
   it("정렬 셀렉터의 기본값은 추천순 + 3개 옵션 노출", async () => {
-    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+    rangeMock.mockResolvedValue({ data: [], error: null });
 
     renderWithProviders(
       <Routes>
@@ -132,7 +142,7 @@ describe("Filter page", () => {
   });
 
   it("정렬 변경 시 클라이언트 정렬 — 서버 재조회는 일어나지 않는다", async () => {
-    orderCreatedAtMock.mockResolvedValue({
+    rangeMock.mockResolvedValue({
       data: [
         makeMakgeolli({ id: "low", name: "약함", alcohol_percentage: 5 }),
         makeMakgeolli({ id: "high", name: "강함", alcohol_percentage: 15 }),
@@ -163,7 +173,7 @@ describe("Filter page", () => {
   });
 
   it("when /filter/sweet has results, renders a card for each result", async () => {
-    orderCreatedAtMock.mockResolvedValue({
+    rangeMock.mockResolvedValue({
       data: [
         makeMakgeolli({ id: "id_1", name: "달달이" }),
         makeMakgeolli({ id: "id_2", name: "단단이" }),
@@ -200,7 +210,7 @@ describe("Filter page", () => {
   });
 
   it("when result is empty, renders empty message", async () => {
-    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+    rangeMock.mockResolvedValue({ data: [], error: null });
 
     renderWithProviders(
       <Routes>
@@ -215,7 +225,7 @@ describe("Filter page", () => {
   });
 
   it("when card clicked, navigates to /makgeolli/:id", async () => {
-    orderCreatedAtMock.mockResolvedValue({
+    rangeMock.mockResolvedValue({
       data: [makeMakgeolli({ id: "abc-123", name: "느린마을" })],
       error: null,
     });

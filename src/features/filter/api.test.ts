@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fetchMakgeollisByFilter, fetchMakgeollisByFilters } from "./api";
+import {
+  fetchMakgeollisByFilter,
+  fetchMakgeollisByFilters,
+  fetchMakgeollisByFiltersPage,
+} from "./api";
 
 // supabase chain 모킹 — iOS fetchFilteredMakgeollis 미러:
 // from("makgeolli").select("*").{gte|eq}(col, val).order("id", asc).order("created_at", desc)
@@ -133,5 +137,44 @@ describe("fetchMakgeollisByFilters (multi-select)", () => {
     await fetchMakgeollisByFilters(["no-sweetener"]);
 
     expect(predicateMock).toHaveBeenCalledWith("has_sweetener", false);
+  });
+});
+
+describe("fetchMakgeollisByFiltersPage (서버 페이지네이션)", () => {
+  it("offset 0, pageSize 10 → range(0, 9)", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({ data: [], error: null });
+    selectMock.mockReturnValue({ order: orderIdMock });
+    orderIdMock.mockReturnValue({ order: orderCreatedAtMock });
+    orderCreatedAtMock.mockReturnValue({ range: rangeMock });
+
+    await fetchMakgeollisByFiltersPage([], 10, 0);
+
+    expect(rangeMock).toHaveBeenCalledWith(0, 9);
+  });
+
+  it("offset 20, pageSize 10 → range(20, 29)", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({ data: [], error: null });
+    selectMock.mockReturnValue({ order: orderIdMock });
+    orderIdMock.mockReturnValue({ order: orderCreatedAtMock });
+    orderCreatedAtMock.mockReturnValue({ range: rangeMock });
+
+    await fetchMakgeollisByFiltersPage([], 10, 20);
+
+    expect(rangeMock).toHaveBeenCalledWith(20, 29);
+  });
+
+  it("filters 2개 적용 후 range 호출 (predicate 2 → order → order → range)", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({ data: [], error: null });
+    predicateMock
+      .mockReturnValueOnce({ gte: predicateMock, eq: predicateMock })
+      .mockReturnValueOnce({ order: orderIdMock });
+    orderIdMock.mockReturnValue({ order: orderCreatedAtMock });
+    orderCreatedAtMock.mockReturnValue({ range: rangeMock });
+
+    await fetchMakgeollisByFiltersPage(["sweet", "sour"], 10, 0);
+
+    expect(predicateMock).toHaveBeenNthCalledWith(1, "sweetness", 3);
+    expect(predicateMock).toHaveBeenNthCalledWith(2, "sourness", 3);
+    expect(rangeMock).toHaveBeenCalledWith(0, 9);
   });
 });

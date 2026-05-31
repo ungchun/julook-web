@@ -36,3 +36,25 @@ export async function fetchMakgeollisByFilters(
   if (error) throw error;
   return (data ?? []) as Makgeolli[];
 }
+
+// iOS fetchFilteredMakgeollis(pageSize, offset, filters) 미러 — 서버 페이지네이션.
+// range(offset, offset + pageSize - 1) 로 한 페이지씩 가져옴. 본앱 pageSize 10.
+export async function fetchMakgeollisByFiltersPage(
+  slugs: FilterSlug[],
+  pageSize: number,
+  offset: number,
+): Promise<Makgeolli[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q: any = supabase.from("makgeolli").select("*");
+  for (const slug of slugs) {
+    q = applyPredicate(q, slug);
+  }
+
+  const { data, error } = await q
+    .order("id", { ascending: true })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + pageSize - 1);
+
+  if (error) throw error;
+  return (data ?? []) as Makgeolli[];
+}

@@ -7,7 +7,7 @@ import {
   FilterChips,
   getFilterMeta,
   SortSelector,
-  useFilteredMakgeollisMulti,
+  useInfiniteFilteredMakgeollis,
   type FilterSlug,
   type SortOption,
 } from "@/features/filter";
@@ -15,12 +15,14 @@ import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
+import { InfiniteListSentinel } from "@/shared/ui/InfiniteListSentinel";
 import styles from "./Filter.module.css";
 
 const ALL_SLUGS = Object.keys(FILTER_META) as FilterSlug[];
 
 // /filter/:type — URL 진입 칩으로 초기화. 칩 multi-select + 클라이언트 정렬은 내부 state.
-// iOS FilterCore: selectedFilters Set + selectedSort. 정렬 변경은 서버 재조회 없이 클라이언트 sort.
+// iOS FilterCore 미러: pageSize 10 서버 페이지네이션 + 클라이언트 sort.
+// 정렬 변경은 서버 재조회 없이 누적된 페이지를 클라이언트에서만 다시 정렬.
 export function Filter() {
   const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
@@ -35,15 +37,21 @@ export function Filter() {
 
   const slugsArray = useMemo(() => Array.from(selected), [selected]);
   const isSupported = type == null || meta != null;
-  const { data, isLoading, isError, refetch } = useFilteredMakgeollisMulti(
-    slugsArray,
-    isSupported,
-  );
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteFilteredMakgeollis(slugsArray, isSupported);
 
-  const displayed = useMemo(
-    () => (data != null ? applySort(data, sort) : []),
-    [data, sort],
+  const allItems = useMemo(
+    () => (data?.pages ?? []).flat(),
+    [data],
   );
+  const displayed = useMemo(() => applySort(allItems, sort), [allItems, sort]);
 
   const toggle = (slug: FilterSlug) => {
     setSelected((prev) => {
@@ -54,6 +62,12 @@ export function Filter() {
     });
     // iOS applyFilters 미러 — 필터 변경 시 정렬 recommended로 리셋
     setSort("recommended");
+  };
+
+  const onSentinel = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage();
+    }
   };
 
   return (
@@ -78,7 +92,7 @@ export function Filter() {
 
           {isLoading && <LoadingState />}
           {isError && <ErrorState onRetry={() => refetch()} />}
-          {!isError && data?.length === 0 && (
+          {!isError && !isLoading && displayed.length === 0 && (
             <EmptyState message="결과가 없어요" />
           )}
           {displayed.length > 0 && (
@@ -92,6 +106,10 @@ export function Filter() {
               ))}
             </div>
           )}
+          {hasNextPage && (
+            <InfiniteListSentinel onIntersect={onSentinel} />
+          )}
+          {isFetchingNextPage && <LoadingState />}
         </>
       )}
     </main>
