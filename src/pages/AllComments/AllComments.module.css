@@ -1,15 +1,9 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   min-height: 100vh;
   background-color: var(--color-darkbase);
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-w);
 }
 
 .list {

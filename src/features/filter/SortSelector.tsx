@@ -23,12 +23,18 @@ export function SortSelector({ value, onChange }: Props) {
         <span aria-hidden className={styles.text}>
           {current.label}
         </span>
-        <img
+        <svg
           aria-hidden
           className={styles.chevron}
-          src="/assets/icon/chevron_up_down.svg"
-          alt=""
-        />
+          width="8"
+          height="12"
+          viewBox="0 0 10 14"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M5 0.5L1 4.5H9L5 0.5Z" fill="currentColor" />
+          <path d="M5 13.5L9 9.5H1L5 13.5Z" fill="currentColor" />
+        </svg>
         <select
           aria-label="정렬 선택"
           className={styles.select}

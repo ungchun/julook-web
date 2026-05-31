@@ -6,10 +6,9 @@ type Props = {
 };
 
 const DEFAULT_COUNT = 5;
-const TASTE_COUNT = 4;
 
-// MakgeolliCard(104×240) 동일 사이즈의 placeholder. 가로 carousel 안에서
-// NewReleases / RandomMakgeolli 섹션 isLoading 시 사용.
+// MakgeolliCard(104×240) 동일 사이즈의 placeholder 카드.
+// 내부는 빈 dark-gray 박스 + 중앙 spinner (이전 pulse skeleton 폐기 — 사용자 요청).
 export function MakgeolliCardSkeleton({
   count = DEFAULT_COUNT,
   testId,
@@ -27,13 +26,7 @@ export function MakgeolliCardSkeleton({
           data-testid="makgeolli-card-skeleton"
           className={styles.card}
         >
-          <div className={styles.imageBox} />
-          <div className={styles.nameBar} />
-          <div className={styles.tasteRow}>
-            {Array.from({ length: TASTE_COUNT }).map((__, j) => (
-              <div key={j} className={styles.tasteCell} />
-            ))}
-          </div>
+          <span className={styles.spinner} aria-hidden />
         </div>
       ))}
     </div>

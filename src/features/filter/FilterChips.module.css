@@ -2,8 +2,9 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  margin: 0 -16px;
-  padding: 10px 0;
+  /* horizontal: main padding 상쇄 / vertical: nav 와 가까이 (gap 14 → 효과 6) */
+  margin: -8px -16px 0;
+  padding: 0;
 }
 
 .scroll::-webkit-scrollbar {
@@ -18,10 +19,10 @@
 
 .chip {
   flex-shrink: 0;
-  padding: 8px 16px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 9999px;
   border: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--color-w);
   cursor: pointer;

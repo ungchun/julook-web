@@ -23,9 +23,7 @@ export function AllComments() {
       className={styles.main}
       style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
     >
-      <PageNav onClose={() => navigate(-1)} />
-
-      <h1 className={styles.title}>코멘트가 달렸어요</h1>
+      <PageNav onClose={() => navigate(-1)} title="코멘트가 달렸어요" />
 
       {isLoading && <CommentRowSkeleton count={5} />}
       {isError && <ErrorState onRetry={() => refetch()} />}
