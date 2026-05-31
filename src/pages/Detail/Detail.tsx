@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
+import { MakgeolliImage } from "@/shared/ui/MakgeolliImage";
 import {
   useMakgeolli,
   TasteScoresSection,
@@ -21,9 +21,6 @@ export function Detail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isSuccess, isError, refetch } = useMakgeolli(id);
-
-  const imageUrl =
-    data?.image_name != null ? getMakgeolliImageUrl(data.image_name) : null;
 
   return (
     <main
@@ -54,11 +51,13 @@ export function Detail() {
       ) : data ? (
         <>
           <header className={styles.header}>
-            {imageUrl != null && (
-              <div className={styles.imageBox}>
-                <img className={styles.image} src={imageUrl} alt={data.name} />
-              </div>
-            )}
+            <div className={styles.imageBox}>
+              <MakgeolliImage
+                className={styles.image}
+                imageName={data.image_name}
+                alt={data.name}
+              />
+            </div>
             <h1 className={styles.name}>{data.name}</h1>
             {(data.brewery != null || data.alcohol_percentage != null) && (
               <div className={styles.metaRow}>

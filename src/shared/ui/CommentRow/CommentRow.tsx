@@ -1,5 +1,5 @@
 import type { Makgeolli, ReactionType, UserComment } from "@/shared/types";
-import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
+import { MakgeolliImage } from "@/shared/ui/MakgeolliImage";
 import { formatDateYMD } from "@/shared/lib/format-date";
 import { reactionCircleIconSrc } from "@/features/reaction/icon";
 import styles from "./CommentRow.module.css";
@@ -26,8 +26,6 @@ export function CommentRow({
   testId,
   reactionType,
 }: Props) {
-  const imageUrl = getMakgeolliImageUrl(makgeolli.image_name);
-
   return (
     <div
       data-testid={testId}
@@ -35,9 +33,11 @@ export function CommentRow({
       onClick={onClick}
     >
       <div className={styles.imageBox}>
-        {imageUrl && (
-          <img className={styles.image} src={imageUrl} alt={makgeolli.name} />
-        )}
+        <MakgeolliImage
+          className={styles.image}
+          imageName={makgeolli.image_name}
+          alt={makgeolli.name}
+        />
       </div>
       <div className={styles.body}>
         <div className={styles.nameRow}>

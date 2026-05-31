@@ -1,5 +1,5 @@
 import type { Makgeolli } from "@/shared/types";
-import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
+import { MakgeolliImage } from "@/shared/ui/MakgeolliImage";
 import styles from "./MakgeolliCard.module.css";
 
 type MakgeolliCardProps = {
@@ -28,19 +28,14 @@ function chartSrc(value: number | null): string {
 }
 
 export function MakgeolliCard({ makgeolli, onClick }: MakgeolliCardProps) {
-  const imageUrl = getMakgeolliImageUrl(makgeolli.image_name);
-
   return (
     <div data-testid="makgeolli-card" className={styles.card} onClick={onClick}>
       <div className={styles.imageBox}>
-        {imageUrl ? (
-          <img className={styles.image} src={imageUrl} alt={makgeolli.name} />
-        ) : (
-          <div
-            data-testid="makgeolli-card-image-placeholder"
-            className={styles.placeholder}
-          />
-        )}
+        <MakgeolliImage
+          className={styles.image}
+          imageName={makgeolli.image_name}
+          alt={makgeolli.name}
+        />
       </div>
       <span className={styles.name}>{makgeolli.name}</span>
       <div className={styles.tasteRow}>
