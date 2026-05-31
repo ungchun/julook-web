@@ -1,9 +1,15 @@
 export { FilterSection } from "./FilterSection";
+export { FilterChips } from "./FilterChips";
+export { SortSelector } from "./SortSelector";
 export {
   FILTER_META,
   getFilterMeta,
   type FilterSlug,
   type FilterMeta,
 } from "./types";
-export { fetchMakgeollisByFilter } from "./api";
-export { useFilteredMakgeollis } from "./use-filtered-makgeollis";
+export { fetchMakgeollisByFilter, fetchMakgeollisByFilters } from "./api";
+export {
+  useFilteredMakgeollis,
+  useFilteredMakgeollisMulti,
+} from "./use-filtered-makgeollis";
+export { applySort, type SortOption } from "./sort";

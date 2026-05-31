@@ -71,9 +71,66 @@ describe("Filter page", () => {
     );
 
     expect(
-      await screen.findByRole("heading", { name: "걸쭉한" }),
+      await screen.findByRole("heading", { name: "특징으로 찾기" }),
     ).toBeInTheDocument();
+    // 진입 deep-link로 thick 칩이 active 상태여야 함
+    expect(screen.getByRole("button", { name: "걸쭉한" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(predicateMock).toHaveBeenCalledWith("thickness", 3);
+  });
+
+  it("정렬 셀렉터의 기본값은 추천순 + 3개 옵션 노출", async () => {
+    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/filter/:type" element={<Filter />} />
+      </Routes>,
+      { route: "/filter/thick" },
+    );
+
+    const select = (await screen.findByLabelText(
+      "정렬 선택",
+    )) as HTMLSelectElement;
+    expect(select.value).toBe("recommended");
+    expect(Array.from(select.options).map((o) => o.value)).toEqual([
+      "recommended",
+      "highAlcohol",
+      "lowAlcohol",
+    ]);
+  });
+
+  it("정렬 변경 시 클라이언트 정렬 — 서버 재조회는 일어나지 않는다", async () => {
+    orderCreatedAtMock.mockResolvedValue({
+      data: [
+        makeMakgeolli({ id: "low", name: "약함", alcohol_percentage: 5 }),
+        makeMakgeolli({ id: "high", name: "강함", alcohol_percentage: 15 }),
+      ],
+      error: null,
+    });
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/filter/:type" element={<Filter />} />
+      </Routes>,
+      { route: "/filter/thick" },
+    );
+
+    await screen.findByText("강함");
+    const callsBefore = orderCreatedAtMock.mock.calls.length;
+
+    await user.selectOptions(screen.getByLabelText("정렬 선택"), "highAlcohol");
+
+    // 정렬 변경 후에도 서버 fetch 추가 호출 없음
+    expect(orderCreatedAtMock.mock.calls.length).toBe(callsBefore);
+
+    // displayed 순서가 강함→약함 (highAlcohol)
+    const cards = screen.getAllByTestId("makgeolli-grid-card");
+    expect(cards[0]).toHaveTextContent("강함");
+    expect(cards[1]).toHaveTextContent("약함");
   });
 
   it("when /filter/sweet has results, renders a card for each result", async () => {
@@ -96,7 +153,7 @@ describe("Filter page", () => {
     await screen.findByText("달달이");
     expect(screen.getByText("단단이")).toBeInTheDocument();
     expect(screen.getByText("꿀막걸리")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(3);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(3);
   });
 
   it("when /filter/unknown is loaded, renders unsupported message and does not call supabase", async () => {
@@ -144,7 +201,7 @@ describe("Filter page", () => {
     );
 
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-card"));
+    await user.click(screen.getByTestId("makgeolli-grid-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });

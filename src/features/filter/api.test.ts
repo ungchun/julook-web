@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fetchMakgeollisByFilter } from "./api";
+import { fetchMakgeollisByFilter, fetchMakgeollisByFilters } from "./api";
 
 // supabase chain 모킹 — iOS fetchFilteredMakgeollis 미러:
 // from("makgeolli").select("*").{gte|eq}(col, val).order("id", asc).order("created_at", desc)
@@ -94,5 +94,44 @@ describe("fetchMakgeollisByFilter", () => {
     await expect(fetchMakgeollisByFilter("thick")).rejects.toThrow(
       "supabase failure",
     );
+  });
+});
+
+describe("fetchMakgeollisByFilters (multi-select)", () => {
+  it("0 slugs → predicate 호출 없이 전체 fetch", async () => {
+    // 0 slugs인 경우 select 다음 바로 order 체이닝
+    selectMock.mockReturnValue({ order: orderIdMock });
+    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+
+    await fetchMakgeollisByFilters([]);
+
+    expect(fromMock).toHaveBeenCalledWith("makgeolli");
+    expect(selectMock).toHaveBeenCalledWith("*");
+    expect(predicateMock).not.toHaveBeenCalled();
+    expect(orderIdMock).toHaveBeenCalledWith("id", { ascending: true });
+    expect(orderCreatedAtMock).toHaveBeenCalledWith("created_at", {
+      ascending: false,
+    });
+  });
+
+  it("2 slugs (sweet + sour) → 각각 gte('sweetness', 3) + gte('sourness', 3) 적용 (AND)", async () => {
+    // predicate가 두 번 호출됨. 두 번째 호출도 다음 predicate 체이닝 + 최종 order
+    predicateMock
+      .mockReturnValueOnce({ gte: predicateMock, eq: predicateMock })
+      .mockReturnValueOnce({ order: orderIdMock });
+    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+
+    await fetchMakgeollisByFilters(["sweet", "sour"]);
+
+    expect(predicateMock).toHaveBeenNthCalledWith(1, "sweetness", 3);
+    expect(predicateMock).toHaveBeenNthCalledWith(2, "sourness", 3);
+  });
+
+  it("no-sweetener 단일 → has_sweetener eq false", async () => {
+    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+
+    await fetchMakgeollisByFilters(["no-sweetener"]);
+
+    expect(predicateMock).toHaveBeenCalledWith("has_sweetener", false);
   });
 });

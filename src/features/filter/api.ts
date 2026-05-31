@@ -3,18 +3,33 @@ import type { Makgeolli } from "@/shared/types";
 import { FILTER_META, type FilterSlug } from "./types";
 
 // iOS fetchFilteredMakgeollis (SupabaseClientLive+Makgeolli.swift:55-82) 미러.
-// 다중 필터(Set<FilterType>) 미지원 — 단일 slug 만. 페이지네이션도 1단계 미지원.
+// 단일 slug 진입 deep link 호환용으로 유지.
 export async function fetchMakgeollisByFilter(
   slug: FilterSlug,
 ): Promise<Makgeolli[]> {
-  const meta = FILTER_META[slug];
-  const base = supabase.from("makgeolli").select("*");
-  const filtered =
-    meta.predicate.op === "gte"
-      ? base.gte(meta.column, meta.predicate.value)
-      : base.eq(meta.column, meta.predicate.value);
+  return fetchMakgeollisByFilters([slug]);
+}
 
-  const { data, error } = await filtered
+// iOS fetchFilteredMakgeollis multi 케이스 — Set<FilterType> 미러.
+// 0개면 predicate 없이 전체 fetch, N개면 각 column에 gte/eq를 순차 AND 적용.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyPredicate(builder: any, slug: FilterSlug): any {
+  const meta = FILTER_META[slug];
+  return meta.predicate.op === "gte"
+    ? builder.gte(meta.column, meta.predicate.value)
+    : builder.eq(meta.column, meta.predicate.value);
+}
+
+export async function fetchMakgeollisByFilters(
+  slugs: FilterSlug[],
+): Promise<Makgeolli[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q: any = supabase.from("makgeolli").select("*");
+  for (const slug of slugs) {
+    q = applyPredicate(q, slug);
+  }
+
+  const { data, error } = await q
     .order("id", { ascending: true })
     .order("created_at", { ascending: false });
 
