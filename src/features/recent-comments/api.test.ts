@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fetchAllPublicComments } from "./api";
+import { fetchAllPublicComments, fetchPublicCommentsPage } from "./api";
 
 // supabase 단일 지점 모킹.
 const fromMock = vi.fn();
@@ -144,5 +144,60 @@ describe("fetchAllPublicComments", () => {
     });
 
     await expect(fetchAllPublicComments()).rejects.toThrow("supabase failure");
+  });
+});
+
+describe("fetchPublicCommentsPage (서버 페이지네이션)", () => {
+  function setupPaginatedCommentsChain(resp: {
+    data: unknown;
+    error: unknown;
+  }) {
+    const rangeMock = vi.fn().mockResolvedValue(resp);
+    const orderMock = vi.fn().mockReturnValue({ range: rangeMock });
+    const eqMock = vi.fn().mockReturnValue({ order: orderMock });
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
+    return { rangeMock, orderMock, eqMock, selectMock };
+  }
+
+  it("pageSize 10, offset 0 → range(0, 9) + is_public=true + created_at desc", async () => {
+    const comments = setupPaginatedCommentsChain({ data: [], error: null });
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_comments") return { select: comments.selectMock };
+      return {};
+    });
+
+    await fetchPublicCommentsPage(10, 0);
+
+    expect(comments.eqMock).toHaveBeenCalledWith("is_public", true);
+    expect(comments.orderMock).toHaveBeenCalledWith("created_at", {
+      ascending: false,
+    });
+    expect(comments.rangeMock).toHaveBeenCalledWith(0, 9);
+  });
+
+  it("offset 20 → range(20, 29)", async () => {
+    const comments = setupPaginatedCommentsChain({ data: [], error: null });
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_comments") return { select: comments.selectMock };
+      return {};
+    });
+
+    await fetchPublicCommentsPage(10, 20);
+
+    expect(comments.rangeMock).toHaveBeenCalledWith(20, 29);
+  });
+
+  it("comments 비어있으면 makgeolli fetch 안 함 + [] 반환", async () => {
+    const comments = setupPaginatedCommentsChain({ data: [], error: null });
+    const makgeolli = setupMakgeolliChain({ data: [], error: null });
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_comments") return { select: comments.selectMock };
+      if (table === "makgeolli") return { select: makgeolli.selectMock };
+      return {};
+    });
+
+    const result = await fetchPublicCommentsPage(10, 0);
+    expect(makgeolli.selectMock).not.toHaveBeenCalled();
+    expect(result).toEqual([]);
   });
 });

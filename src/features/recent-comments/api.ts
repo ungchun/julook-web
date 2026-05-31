@@ -52,7 +52,44 @@ export function fetchRecentComments(): Promise<RecentCommentItem[]> {
 }
 
 // iOS getRecentCommentsPaginated 의 limit/offset 없는 단순화 버전 —
-// 1단계 원칙(페이지네이션 보류). Web /comments/all 페이지에서 사용.
+// 1단계 원칙(페이지네이션 보류). Web /comments/all 페이지 deep-link 호환용 유지.
 export function fetchAllPublicComments(): Promise<RecentCommentItem[]> {
   return fetchPublicCommentsJoined();
+}
+
+// iOS getRecentCommentsPaginated 미러 — .range(offset, offset+pageSize-1) 서버 페이지네이션.
+// 본앱 pageSize 10. 마지막 페이지면 length < pageSize.
+export async function fetchPublicCommentsPage(
+  pageSize: number,
+  offset: number,
+): Promise<RecentCommentItem[]> {
+  const { data: comments, error: commentsError } = await supabase
+    .from("user_comments")
+    .select("*")
+    .eq("is_public", true)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + pageSize - 1);
+
+  if (commentsError) throw commentsError;
+  if (!comments || comments.length === 0) return [];
+
+  const ids = (comments as UserComment[]).map((c) => c.makgeolli_id);
+  const { data: makgeollis, error: makgeolliError } = await supabase
+    .from("makgeolli")
+    .select("*")
+    .in("id", ids);
+
+  if (makgeolliError) throw makgeolliError;
+
+  const byId = new Map(
+    ((makgeollis ?? []) as Makgeolli[]).map((m) => [m.id, m]),
+  );
+
+  return (comments as UserComment[])
+    .map((comment) => {
+      const makgeolli = byId.get(comment.makgeolli_id);
+      if (!makgeolli) return null;
+      return { comment, makgeolli };
+    })
+    .filter((item): item is RecentCommentItem => item !== null);
 }

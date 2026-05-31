@@ -8,34 +8,36 @@ import { AllComments } from "./AllComments";
 const fetchAllPublicCommentsMock = vi.fn();
 const fetchUserReactionMock = vi.fn();
 
+// useInfinitePublicComments 도 useQuery 래핑이라 직접 hook 결과를 컨트롤할 ref 사용.
+// data ref 는 page 단위 (RecentCommentItem[]) — mock 에서 InfiniteData { pages } 형태로 감싼다.
+const useAllPublicCommentsDataRef: { current: unknown } = { current: undefined };
+const useAllPublicCommentsLoadingRef: { current: boolean } = { current: false };
+
 vi.mock("@/features/recent-comments", () => ({
-  useAllPublicComments: () => ({
-    data: undefined,
+  useInfinitePublicComments: () => ({
+    data:
+      useAllPublicCommentsDataRef.current !== undefined
+        ? { pages: [useAllPublicCommentsDataRef.current], pageParams: [0] }
+        : undefined,
+    isLoading: useAllPublicCommentsLoadingRef.current,
+    isError: false,
+    refetch: () => {},
+    hasNextPage: false,
+    isFetchingNextPage: false,
+    fetchNextPage: () => Promise.resolve({}),
   }),
-  // dynamically replaced per test via mockImplementation below
+  useAllPublicComments: () => ({ data: undefined }),
   RecentCommentsSection: () => null,
   fetchRecentComments: () => Promise.resolve([]),
   fetchAllPublicComments: () => fetchAllPublicCommentsMock(),
+  fetchPublicCommentsPage: () => Promise.resolve([]),
   useRecentComments: () => ({ data: undefined }),
+  PUBLIC_COMMENTS_PAGE_SIZE: 10,
 }));
 
 vi.mock("@/features/reaction/api", () => ({
   fetchUserReaction: (...args: unknown[]) => fetchUserReactionMock(...args),
 }));
-
-// useAllPublicComments 가 useQuery 래핑이므로 fetch 결과를 직접 담는 hook 으로 모킹할 수 없음.
-// 대신 hook 모듈 자체를 다시 모킹.
-vi.mock("@/features/recent-comments/use-all-public-comments", () => ({
-  useAllPublicComments: () => ({
-    data: useAllPublicCommentsDataRef.current,
-    isLoading: useAllPublicCommentsLoadingRef.current,
-    isError: false,
-    refetch: () => {},
-  }),
-}));
-
-const useAllPublicCommentsDataRef: { current: unknown } = { current: undefined };
-const useAllPublicCommentsLoadingRef: { current: boolean } = { current: false };
 
 beforeEach(() => {
   vi.clearAllMocks();
