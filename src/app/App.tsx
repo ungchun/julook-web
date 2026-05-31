@@ -9,11 +9,13 @@ import { Filter } from "@/pages/Filter";
 import { Awards } from "@/pages/Awards";
 import { AllComments } from "@/pages/AllComments";
 import { BottomTabBar } from "@/features/tab-bar";
+import { ScrollToTop } from "@/shared/ui/ScrollToTop";
 
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/makgeolli/:id" element={<Detail />} />

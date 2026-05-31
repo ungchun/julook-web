@@ -19,6 +19,7 @@
 
 /* 이미지 50x114 aspectFit (iOS makeImageView frame) */
 .imageBox {
+  position: relative;
   width: 50px;
   height: 114px;
   margin: 0 auto;

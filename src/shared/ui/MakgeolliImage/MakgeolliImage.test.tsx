@@ -53,4 +53,29 @@ describe("MakgeolliImage", () => {
 
     expect(img.getAttribute("src")).toBe(FALLBACK_SRC);
   });
+
+  it("로딩 중에는 spinner(role=status, label=이미지 로딩 중) 가 함께 표시된다", () => {
+    render(<MakgeolliImage imageName="bongttle" alt="봇뜰" />);
+    expect(
+      screen.getByRole("status", { name: "이미지 로딩 중" }),
+    ).toBeInTheDocument();
+  });
+
+  it("img onLoad 발생 후 spinner 제거된다", () => {
+    render(<MakgeolliImage imageName="bongttle" alt="봇뜰" />);
+    const img = screen.getByAltText("봇뜰") as HTMLImageElement;
+
+    fireEvent.load(img);
+
+    expect(
+      screen.queryByRole("status", { name: "이미지 로딩 중" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("fallback (imageName=null) 일 때는 처음부터 spinner 없음", () => {
+    render(<MakgeolliImage imageName={null} alt="없음" />);
+    expect(
+      screen.queryByRole("status", { name: "이미지 로딩 중" }),
+    ).not.toBeInTheDocument();
+  });
 });

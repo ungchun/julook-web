@@ -19,6 +19,7 @@
 }
 
 .imageBox {
+  position: relative;
   height: 150px;
   display: flex;
   align-items: center;
