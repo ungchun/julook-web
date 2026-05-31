@@ -51,8 +51,26 @@ describe("FilterSection navigation", () => {
     await user.click(screen.getByRole("button", { name: "감미료 없는" }));
 
     await screen.findByTestId("filter-target");
-    // MemoryRouter는 window.location을 안 바꾸므로 path 검증은 navigate 자체로 충분.
-    // pathSeen 미사용 — 에러 회피용으로 변수 참조만.
     expect(pathSeen).toBeDefined();
+  });
+
+  it("when 헤더 영역 클릭 (button name='특징으로 찾기') → /filter (빈 선택) 진입", async () => {
+    const user = userEvent.setup();
+
+    function FilterEmptyProbe() {
+      return <div data-testid="filter-empty" />;
+    }
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<FilterSection />} />
+        <Route path="/filter" element={<FilterEmptyProbe />} />
+      </Routes>,
+      { route: "/" },
+    );
+
+    await user.click(screen.getByRole("button", { name: /특징으로 찾기/ }));
+
+    expect(await screen.findByTestId("filter-empty")).toBeInTheDocument();
   });
 });

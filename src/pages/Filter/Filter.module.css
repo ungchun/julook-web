@@ -6,12 +6,6 @@
   background-color: var(--color-darkbase);
 }
 
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-w);
-}
-
 .list {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

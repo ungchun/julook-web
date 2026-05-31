@@ -20,8 +20,11 @@
 }
 
 .chevron {
-  font-size: 14px;
-  line-height: 1;
+  width: 8px;
+  height: 12px;
+  display: block;
+  /* SVG currentColor → label color (primary) */
+  color: var(--color-primary);
 }
 
 /* native select를 라벨 전체 영역에 투명하게 오버레이 → 텍스트+chevron 클릭으로 열림 */

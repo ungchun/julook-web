@@ -17,6 +17,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/makgeolli/:id" element={<Detail />} />
+          <Route path="/filter" element={<Filter />} />
           <Route path="/filter/:type" element={<Filter />} />
           <Route path="/awards/:awardId" element={<Awards />} />
           <Route path="/comments/all" element={<AllComments />} />

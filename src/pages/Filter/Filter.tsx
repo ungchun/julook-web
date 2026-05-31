@@ -61,15 +61,13 @@ export function Filter() {
       className={styles.main}
       style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
     >
-      <PageNav onClose={() => navigate(-1)} />
+      <PageNav onClose={() => navigate(-1)} title="특징으로 찾기" />
 
       {meta == null && type != null && (
         <EmptyState message="지원하지 않는 필터입니다" />
       )}
       {(meta != null || type == null) && (
         <>
-          <h1 className={styles.title}>특징으로 찾기</h1>
-
           <FilterChips
             slugs={ALL_SLUGS}
             selected={selected}

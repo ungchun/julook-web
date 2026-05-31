@@ -81,6 +81,35 @@ describe("Filter page", () => {
     expect(predicateMock).toHaveBeenCalledWith("thickness", 3);
   });
 
+  it("/filter (type 없음) 진입 시 칩 모두 비활성 + 전체 fetch (predicate 호출 0)", async () => {
+    // 0 slugs인 경우 select → 바로 order 체인
+    selectMock.mockReturnValue({ order: orderIdMock });
+    orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/filter" element={<Filter />} />
+      </Routes>,
+      { route: "/filter" },
+    );
+
+    await screen.findByRole("heading", { name: "특징으로 찾기" });
+    expect(predicateMock).not.toHaveBeenCalled();
+    // 칩이 5개 모두 미선택
+    for (const label of [
+      "걸쭉한",
+      "달달한",
+      "시큼한",
+      "탄산감 많은",
+      "감미료 없는",
+    ]) {
+      expect(screen.getByRole("button", { name: label })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    }
+  });
+
   it("정렬 셀렉터의 기본값은 추천순 + 3개 옵션 노출", async () => {
     orderCreatedAtMock.mockResolvedValue({ data: [], error: null });
 

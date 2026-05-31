@@ -10,20 +10,25 @@ const FILTER_ORDER: readonly FilterSlug[] = [
   "no-sweetener",
 ];
 
-// iOS MakgeolliFilterView 미러 — 항목 탭 시 /filter/:slug 진입.
+// iOS MakgeolliFilterView 미러 — 헤더 전체 클릭 시 /filter (빈 선택) 진입,
+// 각 칩 클릭 시 /filter/:slug (deep-link, 해당 칩만 선택된 상태) 진입.
 export function FilterSection() {
   const navigate = useNavigate();
 
   return (
     <section data-testid="filter-section" className={styles.section}>
-      <div className={styles.titleRow}>
-        <h2 className={styles.title}>특징으로 찾기</h2>
+      <button
+        type="button"
+        className={styles.titleRow}
+        onClick={() => navigate("/filter")}
+      >
+        <span className={styles.title}>특징으로 찾기</span>
         <img
           className={styles.titleArrow}
           src="/assets/arrow/right.svg"
           alt=""
         />
-      </div>
+      </button>
       <div className={styles.list}>
         {FILTER_ORDER.map((slug) => {
           const meta = FILTER_META[slug];

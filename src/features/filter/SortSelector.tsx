@@ -23,9 +23,12 @@ export function SortSelector({ value, onChange }: Props) {
         <span aria-hidden className={styles.text}>
           {current.label}
         </span>
-        <span aria-hidden className={styles.chevron}>
-          ⌄
-        </span>
+        <img
+          aria-hidden
+          className={styles.chevron}
+          src="/assets/icon/chevron_up_down.svg"
+          alt=""
+        />
         <select
           aria-label="정렬 선택"
           className={styles.select}
