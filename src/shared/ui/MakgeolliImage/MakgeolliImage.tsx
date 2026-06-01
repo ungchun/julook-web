@@ -5,6 +5,8 @@ import styles from "./MakgeolliImage.module.css";
 const FALLBACK_SRC = "/assets/placeholder/default_makgeolli.svg";
 const MAX_RETRY = 1;
 
+import { loadedUrls } from "./loaded-urls";
+
 type Props = {
   imageName: string | null;
   alt: string;
@@ -18,13 +20,15 @@ export function MakgeolliImage({ imageName, alt, className }: Props) {
   const baseUrl = getMakgeolliImageUrl(imageName);
   const [retry, setRetry] = useState(0);
   const [failed, setFailed] = useState(baseUrl == null);
-  // imageName null → 즉시 fallback 이라 spinner 불필요. baseUrl 있으면 로딩 표시.
-  const [loaded, setLoaded] = useState(baseUrl == null);
+  // imageName null → 즉시 fallback. baseUrl 있어도 이전에 로드된 적 있으면 spinner 생략.
+  const [loaded, setLoaded] = useState(
+    baseUrl == null || loadedUrls.has(baseUrl),
+  );
 
   useEffect(() => {
     setRetry(0);
     setFailed(baseUrl == null);
-    setLoaded(baseUrl == null);
+    setLoaded(baseUrl == null || (baseUrl != null && loadedUrls.has(baseUrl)));
   }, [baseUrl]);
 
   const src = failed
@@ -46,7 +50,10 @@ export function MakgeolliImage({ imageName, alt, className }: Props) {
         className={className}
         src={src}
         alt={alt}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          if (baseUrl != null && !failed) loadedUrls.add(baseUrl);
+          setLoaded(true);
+        }}
         onError={() => {
           if (failed) {
             setLoaded(true);

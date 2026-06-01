@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MakgeolliImage } from "./MakgeolliImage";
+import { __resetLoadedUrlsForTest } from "./loaded-urls";
 
 vi.mock("@/shared/lib/makgeolli-image", () => ({
   getMakgeolliImageUrl: (name: string | null) =>
@@ -77,5 +78,35 @@ describe("MakgeolliImage", () => {
     expect(
       screen.queryByRole("status", { name: "이미지 로딩 중" }),
     ).not.toBeInTheDocument();
+  });
+
+  describe("loaded URL 메모이즈 — 페이지 재진입 시 spinner 깜빡임 방지", () => {
+    afterEach(() => {
+      __resetLoadedUrlsForTest();
+    });
+
+    it("한 번 로드된 src 의 컴포넌트를 다시 mount 하면 spinner 없이 즉시 이미지만 렌더", () => {
+      const first = render(<MakgeolliImage imageName="bongttle" alt="봇뜰" />);
+      const img1 = screen.getByAltText("봇뜰") as HTMLImageElement;
+      fireEvent.load(img1);
+      first.unmount();
+
+      // 두 번째 mount (탭/페이지 재진입 시뮬레이션)
+      render(<MakgeolliImage imageName="bongttle" alt="봇뜰" />);
+      expect(
+        screen.queryByRole("status", { name: "이미지 로딩 중" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("처음 보는 src 는 여전히 spinner 표시", () => {
+      const first = render(<MakgeolliImage imageName="bongttle" alt="봇뜰" />);
+      fireEvent.load(screen.getByAltText("봇뜰"));
+      first.unmount();
+
+      render(<MakgeolliImage imageName="neurin" alt="느린마을" />);
+      expect(
+        screen.getByRole("status", { name: "이미지 로딩 중" }),
+      ).toBeInTheDocument();
+    });
   });
 });
