@@ -69,6 +69,14 @@
   padding: 0 16px;
 }
 
+/* 사파리에서 horizontal scroll 의 padding-right 가 마지막 카드 뒤에 보이지 않는 버그 회피.
+   ::after spacer 로 카드와 동일 자식으로 강제 끝 여백 확보. */
+.strip::after {
+  content: "";
+  flex: 0 0 4px;
+  align-self: stretch;
+}
+
 .strip::-webkit-scrollbar {
   display: none;
 }
