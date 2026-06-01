@@ -56,7 +56,8 @@
 
 /* === public comments strip ===
    iOS ScrollView(.horizontal) + LazyHStack(spacing: 12) 미러.
-   width: 100% + min-width: 0 으로 부모 column 폭 안에서만 overflow-x 가 발현되도록 보장. */
+   main 의 padding 16 안쪽에서만 스크롤 — 양 끝에서 다른 카드 잔재가 보이지 않고
+   사파리 padding-right 무시 버그도 영향 없음. */
 .strip {
   display: flex;
   gap: 12px;
@@ -65,16 +66,6 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  margin: 0 -16px;
-  padding: 0 16px;
-}
-
-/* 사파리에서 horizontal scroll 의 padding-right 가 마지막 카드 뒤에 보이지 않는 버그 회피.
-   ::after spacer 로 카드와 동일 자식으로 강제 끝 여백 확보. */
-.strip::after {
-  content: "";
-  flex: 0 0 4px;
-  align-self: stretch;
 }
 
 .strip::-webkit-scrollbar {
