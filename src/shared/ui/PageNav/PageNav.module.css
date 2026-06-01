@@ -1,4 +1,5 @@
-/* iOS UINavigationBar 미러 — 좌측 close 절대 위치, 중앙 title은 nav 전체 가운데 정렬. */
+/* iOS UINavigationBar 미러 — 우측 close 절대 위치, 중앙 title은 nav 전체 가운데 정렬.
+   Detail 의 닫기 버튼과 동일하게 우측 정렬 통일 (앱 전체 일관성). */
 .navBar {
   position: relative;
   display: flex;
@@ -9,7 +10,7 @@
 
 .closeButton {
   position: absolute;
-  left: 0;
+  right: 0;
   background: transparent;
   border: 0;
   padding: 0;

@@ -7,7 +7,8 @@ type Props = {
 };
 
 // Filter / Awards / AllComments 페이지 공통 nav.
-// 좌측 닫기 + (옵션) 중앙 title — iOS .addNavigationBar(title:) 미러.
+// 우측 닫기 + (옵션) 중앙 title — iOS .addNavigationBar(title:) 미러.
+// Detail 페이지의 닫기 위치와 동일하게 우측 정렬로 통일.
 export function PageNav({ onClose, title }: Props) {
   return (
     <nav className={styles.navBar}>

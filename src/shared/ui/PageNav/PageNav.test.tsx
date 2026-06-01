@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { PageNav } from "./PageNav";
 
 describe("PageNav", () => {
-  it("title 미지정 시 좌측 닫기 버튼만 렌더", () => {
+  it("title 미지정 시 우측 닫기 버튼만 렌더", () => {
     render(<PageNav onClose={() => {}} />);
     expect(screen.getByRole("button", { name: "닫기" })).toBeInTheDocument();
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
