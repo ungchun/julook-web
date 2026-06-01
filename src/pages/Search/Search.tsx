@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MakgeolliCard } from "@/features/makgeolli-list";
+import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
   RecentSearches,
   useRecentSearches,
@@ -93,7 +93,7 @@ export function Search() {
       {data != null && data.length > 0 && (
         <div className={styles.list}>
           {displayed.map((m) => (
-            <MakgeolliCard
+            <MakgeolliGridCard
               key={m.id}
               makgeolli={m}
               onClick={() => goDetail(m.id)}

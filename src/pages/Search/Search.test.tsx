@@ -101,7 +101,7 @@ describe("Search page", () => {
     // debounce 후 useSearch 가 "느린" 으로 호출되고 결과가 렌더
     expect(await screen.findByText("느린마을")).toBeInTheDocument();
     expect(screen.getByText("느린마을 골드")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
   });
 
   it("when results are empty for a query, renders '검색 결과가 없어요'", async () => {
@@ -169,7 +169,7 @@ describe("Search page", () => {
 
     await user.type(screen.getByRole("searchbox"), "느린");
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-card"));
+    await user.click(screen.getByTestId("makgeolli-grid-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });
@@ -203,7 +203,7 @@ describe("Search page", () => {
     expect(
       (screen.getByRole("searchbox") as HTMLInputElement).value,
     ).toBe("느린마을");
-    expect(await screen.findByTestId("makgeolli-card")).toBeInTheDocument();
+    expect(await screen.findByTestId("makgeolli-grid-card")).toBeInTheDocument();
   });
 
   it("when search returns 100 results, only first 20 cards are rendered", async () => {
@@ -219,7 +219,7 @@ describe("Search page", () => {
     renderWithProviders(<Search />);
     await user.type(screen.getByRole("searchbox"), "느린");
 
-    const cards = await screen.findAllByTestId("makgeolli-card");
+    const cards = await screen.findAllByTestId("makgeolli-grid-card");
     expect(cards).toHaveLength(20);
     expect(screen.getByTestId("infinite-sentinel")).toBeInTheDocument();
   });
@@ -242,13 +242,13 @@ describe("Search page", () => {
     const input = screen.getByRole("searchbox") as HTMLInputElement;
     await user.type(input, "A");
     await waitFor(() =>
-      expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(20),
+      expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(20),
     );
 
     await user.clear(input);
     await user.type(input, "B");
     await waitFor(() => {
-      expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(20);
+      expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(20);
       expect(screen.getByText("B_0")).toBeInTheDocument();
     });
   });
@@ -274,7 +274,7 @@ describe("Search page", () => {
 
     await user.type(screen.getByRole("searchbox"), "느린");
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-card"));
+    await user.click(screen.getByTestId("makgeolli-grid-card"));
 
     await waitFor(() => {
       expect(saveRecentSearchesMock).toHaveBeenCalledWith(["느린"]);
