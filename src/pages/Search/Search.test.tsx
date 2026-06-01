@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { renderWithProviders } from "@/test/utils";
 import { Search } from "./Search";
+import { __resetSearchPersistenceForTest } from "@/features/search/search-persistence";
 
 const searchMakgeollisMock = vi.fn();
 const loadRecentSearchesMock = vi.fn();
@@ -37,6 +38,7 @@ const useSearchRef: {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  __resetSearchPersistenceForTest();
   useSearchRef.current = () => ({ data: undefined, isLoading: false });
   loadRecentSearchesMock.mockResolvedValue([]);
   saveRecentSearchesMock.mockResolvedValue(undefined);
@@ -277,5 +279,22 @@ describe("Search page", () => {
     await waitFor(() => {
       expect(saveRecentSearchesMock).toHaveBeenCalledWith(["느린"]);
     });
+  });
+
+  it("재진입(unmount → mount) 시 직전 검색어가 input 에 복원된다", async () => {
+    const user = userEvent.setup();
+    useSearchRef.current = () => ({ data: [], isLoading: false });
+
+    const first = renderWithProviders(<Search />);
+    await user.type(screen.getByRole("searchbox"), "느린마을");
+
+    first.unmount();
+
+    // Detail 등에서 뒤로 돌아온 시점
+    renderWithProviders(<Search />);
+    const input = (await screen.findByRole(
+      "searchbox",
+    )) as HTMLInputElement;
+    expect(input.value).toBe("느린마을");
   });
 });

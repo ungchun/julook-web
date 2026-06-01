@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MakgeolliCard } from "@/features/makgeolli-list";
 import {
@@ -6,6 +6,10 @@ import {
   useRecentSearches,
   useSearch,
 } from "@/features/search";
+import {
+  getPersistedSearchQuery,
+  setPersistedSearchQuery,
+} from "@/features/search/search-persistence";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
 import { usePaginatedList } from "@/shared/lib/use-paginated-list";
 import { EmptyState } from "@/shared/ui/EmptyState";
@@ -20,8 +24,13 @@ const SEARCH_PAGE_SIZE = 20;
 // search_makgeolli_flexible RPC 사용, 300ms debounce.
 // 최근 검색어는 카드 클릭 시점에 add() — "이 검색어로 탐색했다"는 명확한 의도.
 export function Search() {
-  const [rawQuery, setRawQuery] = useState("");
+  // 재진입(Detail → 뒤로) 시 직전 검색어 복원 — persistence 없으면 빈 문자열.
+  const [rawQuery, setRawQuery] = useState(() => getPersistedSearchQuery());
   const debouncedQuery = useDebouncedValue(rawQuery.trim(), 300);
+
+  useEffect(() => {
+    setPersistedSearchQuery(rawQuery);
+  }, [rawQuery]);
   const { data, isLoading, isError, refetch } = useSearch(debouncedQuery);
   const recent = useRecentSearches();
   const navigate = useNavigate();
