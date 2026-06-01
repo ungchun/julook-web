@@ -1,19 +1,14 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  /* iOS FilterView VStack 미러 — Filter 페이지와 동일 spacing */
+  gap: 14px;
   min-height: 100vh;
   background-color: var(--color-darkbase);
 }
 
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-w);
-}
-
 .list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
 }

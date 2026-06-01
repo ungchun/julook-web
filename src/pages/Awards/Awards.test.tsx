@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { renderWithProviders } from "@/test/utils";
@@ -101,13 +101,17 @@ describe("Awards page", () => {
       { route: "/awards/award-uuid-1" },
     );
 
+    // iOS isTopicMode 미러: title 은 nav bar 안. 별도 큰 h1 없음.
+    const nav = await screen.findByRole("navigation");
     expect(
-      await screen.findByRole("heading", { name: "2024 대한민국 주류대상" }),
+      await within(nav).findByRole("heading", {
+        name: "2024 대한민국 주류대상",
+      }),
     ).toBeInTheDocument();
 
     await screen.findByText("느린마을");
     expect(screen.getByText("지평막걸리")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
 
     expect(awardsEqMock).toHaveBeenCalledWith("id", "award-uuid-1");
     expect(makgeolliContainsMock).toHaveBeenCalledWith("awards", [
@@ -145,7 +149,8 @@ describe("Awards page", () => {
       { route: "/awards/award-uuid-1" },
     );
 
-    await screen.findByRole("heading", { name: "2024 대한민국 주류대상" });
+    const nav = await screen.findByRole("navigation");
+    await within(nav).findByRole("heading", { name: "2024 대한민국 주류대상" });
     expect(await screen.findByText("결과가 없어요")).toBeInTheDocument();
   });
 
@@ -169,7 +174,7 @@ describe("Awards page", () => {
     );
 
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-card"));
+    await user.click(screen.getByTestId("makgeolli-grid-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });
