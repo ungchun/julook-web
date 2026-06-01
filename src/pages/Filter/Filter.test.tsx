@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { renderWithProviders } from "@/test/utils";
 import { Filter } from "./Filter";
+import { __resetFilterPersistenceForTest } from "@/features/filter/filter-persistence";
 import type { Makgeolli } from "@/shared/types";
 
 // supabase chain 모킹 — 페이지네이션 chain:
@@ -30,6 +31,7 @@ vi.mock("@/shared/lib/supabase", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  __resetFilterPersistenceForTest();
   fromMock.mockReturnValue({ select: selectMock });
   selectMock.mockReturnValue({
     gte: predicateMock,
@@ -222,6 +224,51 @@ describe("Filter page", () => {
     expect(
       await screen.findByText("결과가 없어요"),
     ).toBeInTheDocument();
+  });
+
+  it("재진입(unmount → mount)해도 추가 선택한 칩과 정렬이 유지된다", async () => {
+    rangeMock.mockResolvedValue({
+      data: [
+        makeMakgeolli({ id: "low", name: "약함", alcohol_percentage: 5 }),
+        makeMakgeolli({ id: "high", name: "강함", alcohol_percentage: 15 }),
+      ],
+      error: null,
+    });
+    const user = userEvent.setup();
+
+    // 1차 mount: /filter/thick + 사용자가 sweet 추가 + lowAlcohol 정렬
+    const first = renderWithProviders(
+      <Routes>
+        <Route path="/filter/:type" element={<Filter />} />
+      </Routes>,
+      { route: "/filter/thick" },
+    );
+
+    await screen.findByText("강함");
+    await user.click(screen.getByRole("button", { name: "달달한" }));
+    await user.selectOptions(screen.getByLabelText("정렬 선택"), "lowAlcohol");
+
+    first.unmount();
+
+    // 2차 mount: 같은 URL 로 재진입 (Detail → 뒤로 시뮬레이션)
+    renderWithProviders(
+      <Routes>
+        <Route path="/filter/:type" element={<Filter />} />
+      </Routes>,
+      { route: "/filter/thick" },
+    );
+
+    // 추가 선택한 sweet 와 정렬 lowAlcohol 모두 유지
+    expect(
+      await screen.findByRole("button", { name: "달달한" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "걸쭉한" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect((screen.getByLabelText("정렬 선택") as HTMLSelectElement).value).toBe(
+      "lowAlcohol",
+    );
   });
 
   it("when card clicked, navigates to /makgeolli/:id", async () => {

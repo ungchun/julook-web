@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
   applySort,
@@ -11,6 +11,10 @@ import {
   type FilterSlug,
   type SortOption,
 } from "@/features/filter";
+import {
+  getPersistedFilterState,
+  setPersistedFilterState,
+} from "@/features/filter/filter-persistence";
 import { PageNav } from "@/shared/ui/PageNav";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
@@ -26,14 +30,29 @@ const ALL_SLUGS = Object.keys(FILTER_META) as FilterSlug[];
 export function Filter() {
   const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const meta = type != null ? getFilterMeta(type) : undefined;
+  const persistenceKey = location.pathname;
 
+  // 재진입 시 persistence 복원 — 없으면 URL :type 기반 초기 선택.
   const [selected, setSelected] = useState<Set<FilterSlug>>(() => {
+    const persisted = getPersistedFilterState(persistenceKey);
+    if (persisted != null) return new Set(persisted.selected);
     const initial = new Set<FilterSlug>();
     if (meta != null) initial.add(meta.slug);
     return initial;
   });
-  const [sort, setSort] = useState<SortOption>("recommended");
+  const [sort, setSort] = useState<SortOption>(
+    () => getPersistedFilterState(persistenceKey)?.sort ?? "recommended",
+  );
+
+  // 변경 즉시 persistence 갱신 — 다음 mount(뒤로 진입)에서 복원됨.
+  useEffect(() => {
+    setPersistedFilterState(persistenceKey, {
+      selected: Array.from(selected),
+      sort,
+    });
+  }, [persistenceKey, selected, sort]);
 
   const slugsArray = useMemo(() => Array.from(selected), [selected]);
   const isSupported = type == null || meta != null;
