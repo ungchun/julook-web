@@ -1,8 +1,10 @@
-/* iOS InformationView+Evaluation 미러 — VStack(alignment:leading, spacing: 20). */
+/* iOS InformationView+Evaluation 미러 — VStack(alignment:leading, spacing: 20).
+   min-width: 0 은 column flex 안 자식(.strip) 가로 스크롤이 모바일 사파리에서 깨지지 않도록 강제. */
 .section {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
 }
 
 .title {
@@ -52,10 +54,14 @@
   color: var(--color-w-50);
 }
 
-/* === public comments strip === */
+/* === public comments strip ===
+   iOS ScrollView(.horizontal) + LazyHStack(spacing: 12) 미러.
+   width: 100% + min-width: 0 으로 부모 column 폭 안에서만 overflow-x 가 발현되도록 보장. */
 .strip {
   display: flex;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
