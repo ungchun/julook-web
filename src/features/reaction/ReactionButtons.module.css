@@ -1,6 +1,7 @@
+/* iOS DesignSystem/Buttons/ReactionButton.swift 미러 */
 .row {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-3); /* iOS HStack spacing 12 */
 }
 
 .button {
@@ -8,12 +9,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
+  gap: 4px; /* iOS HStack(spacing: 4) — 아이콘과 텍스트 사이 */
+  height: 50px; /* iOS .frame(height: 50) */
   background-color: var(--color-w-10);
   color: var(--color-w-85);
-  font-size: var(--font-size-15);
-  border-radius: var(--radius-md);
+  font-size: var(--font-size-17);
+  font-weight: var(--font-weight-regular);
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
@@ -21,9 +25,23 @@
   transform: scale(0.98);
 }
 
-/* aria-pressed=true → 활성 상태 */
-.button[aria-pressed="true"] {
-  background-color: var(--color-primary);
-  color: var(--color-dark-base);
-  font-weight: var(--font-weight-bold);
+.icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  /* SVG currentColor → button color (w85 / w) */
+  color: inherit;
+  fill: currentColor;
+}
+
+/* iOS active dislike → lilac / fg white */
+.dislike[aria-pressed="true"] {
+  background-color: var(--color-lilac);
+  color: var(--color-w);
+}
+
+/* iOS active like → goldenyellow / fg white */
+.like[aria-pressed="true"] {
+  background-color: var(--color-golden-yellow);
+  color: var(--color-w);
 }

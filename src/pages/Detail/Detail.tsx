@@ -4,11 +4,10 @@ import {
   useMakgeolli,
   TasteScoresSection,
   AwardsSection,
+  EvaluationSection,
   IngredientsSection,
-  BreweryWebsiteSection,
 } from "@/features/makgeolli-detail";
 import { ReactionButtons } from "@/features/reaction";
-import { DetailCommentsSection } from "@/features/detail-comments";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
@@ -25,7 +24,7 @@ export function Detail() {
   return (
     <main
       className={styles.main}
-      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 120 }}
     >
       <span data-testid="detail-id" className={styles.detailId}>
         {id}
@@ -77,12 +76,8 @@ export function Detail() {
           />
           <ReactionButtons makgeolliId={data.id} />
           <AwardsSection awards={data.awards} />
+          <EvaluationSection makgeolliId={data.id} />
           <IngredientsSection ingredients={data.ingredients} />
-          <BreweryWebsiteSection
-            brewery={data.brewery}
-            website={data.website}
-          />
-          <DetailCommentsSection makgeolliId={data.id} />
         </>
       ) : (
         <LoadingState />

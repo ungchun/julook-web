@@ -1,12 +1,12 @@
 import type { Makgeolli } from "@/shared/types";
 import styles from "./sections.module.css";
 
-// 맛 4지표 라벨 (iOS L10n.Common.Taste.* 미러: 달·시·걸·탄).
+// 맛 4지표 라벨 (iOS L10n.Common.Taste.* 미러: 단맛/신맛/걸쭉/탄산).
 const TASTE_LABELS = [
-  { key: "sweetness", label: "달" },
-  { key: "sourness", label: "시" },
-  { key: "thickness", label: "걸" },
-  { key: "carbonation", label: "탄" },
+  { key: "sweetness", label: "단맛" },
+  { key: "sourness", label: "신맛" },
+  { key: "thickness", label: "걸쭉" },
+  { key: "carbonation", label: "탄산" },
 ] as const satisfies ReadonlyArray<{
   key: keyof Pick<
     Makgeolli,

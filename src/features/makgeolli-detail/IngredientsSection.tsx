@@ -13,7 +13,7 @@ export function IngredientsSection({ ingredients }: IngredientsSectionProps) {
     <section data-testid="ingredients" className={styles.section}>
       <h2 className={styles.title}>원재료</h2>
       <p className={styles.ingredientsBody}>{ingredients.join(", ")}</p>
-      <p className={styles.ingredientsSource}>출처: 제조사</p>
+      <p className={styles.ingredientsSource}>정보출처: 식품안전나라</p>
     </section>
   );
 }

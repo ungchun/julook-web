@@ -1,19 +1,21 @@
 .main {
   display: flex;
   flex-direction: column;
+  /* 본앱 각 섹션 padding(.bottom, 32~40) 미러 — 평균 32px spacing */
   gap: 32px;
   padding-left: 16px;
   padding-right: 16px;
   padding-bottom: 60px;
 }
 
-/* iOS InformationView+NavigationBar 미러 — height 40, top 4, bottom 32 (찜 제거하여 우측 close만) */
+/* iOS InformationView+NavigationBar 미러 — height 40, top 4 (찜 제거하여 우측 close만)
+   nav 아래 spacing은 header padding-top 만 사용 (이중 spacing 제거) */
 .navBar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   height: 40px;
-  margin: var(--space-1) 0 var(--space-8);
+  margin: var(--space-1) 0 0;
 }
 
 .closeButton {
@@ -46,9 +48,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  /* iOS InformationView+Detail 미러 — Circle이 -40 offset이라 위쪽 여백 확보 */
-  padding-top: var(--space-10);
+  /* iOS detailNameLine: VStack(spacing: 4) — name 과 metaRow 사이 4px */
+  gap: var(--space-1);
+  /* circle::before top: -40 보상 — 본앱은 nav 영역 위로 튀어나가지만 웹은 nav 침범 회피 */
+  padding-top: var(--space-4);
 }
 
 /* iOS: ZStack { Circle 234x234(.lilacNeutral) offset y:-40 + AsyncImage height 244 } */
@@ -59,7 +62,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-8); /* iOS .padding(.bottom, 32) */
+  /* image → name 사이 spacing — 32 → 16 */
+  margin-bottom: var(--space-4);
 }
 
 .imageBox::before {

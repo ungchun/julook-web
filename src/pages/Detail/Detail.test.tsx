@@ -31,12 +31,17 @@ vi.mock("@/features/reaction", () => ({
   ReactionButtons: () => null,
 }));
 
-// DetailCommentsSection은 별도 테스트가 있고, 여기선 마운트 + makgeolliId prop 전달만 검증.
-vi.mock("@/features/detail-comments", () => ({
-  DetailCommentsSection: ({ makgeolliId }: { makgeolliId: string | undefined }) => (
-    <div data-testid="detail-comments-stub" data-makgeolli-id={makgeolliId} />
-  ),
-}));
+// EvaluationSection 은 별도 시나리오 — Detail 통합 테스트에선 mount 확인만.
+vi.mock("@/features/makgeolli-detail", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/features/makgeolli-detail")>();
+  return {
+    ...actual,
+    EvaluationSection: ({ makgeolliId }: { makgeolliId: string }) => (
+      <div data-testid="evaluation-section" data-makgeolli-id={makgeolliId} />
+    ),
+  };
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -145,13 +150,13 @@ describe("Detail page", () => {
     );
 
     const tasteSection = await screen.findByTestId("taste-scores");
-    expect(tasteSection).toHaveTextContent("달");
+    expect(tasteSection).toHaveTextContent("단맛");
     expect(tasteSection).toHaveTextContent("4");
-    expect(tasteSection).toHaveTextContent("시");
+    expect(tasteSection).toHaveTextContent("신맛");
     expect(tasteSection).toHaveTextContent("2");
-    expect(tasteSection).toHaveTextContent("걸");
+    expect(tasteSection).toHaveTextContent("걸쭉");
     expect(tasteSection).toHaveTextContent("5");
-    expect(tasteSection).toHaveTextContent("탄");
+    expect(tasteSection).toHaveTextContent("탄산");
     expect(tasteSection).toHaveTextContent("0");
   });
 
@@ -252,7 +257,7 @@ describe("Detail page", () => {
     expect(screen.queryByTestId("ingredients")).not.toBeInTheDocument();
   });
 
-  it("when brewery and website both exist, then renders brewery as external link", async () => {
+  it("brewery website 섹션은 Detail 페이지에서 제거됨 — 어떤 데이터든 미렌더", async () => {
     setupSupabase(
       makeFixture({
         brewery: "배상면주가",
@@ -267,32 +272,14 @@ describe("Detail page", () => {
       { route: "/makgeolli/fixture-id" },
     );
 
-    const link = await screen.findByRole("link", { name: "배상면주가" });
-    expect(link).toHaveAttribute("href", "https://baesangmyun.com");
-    expect(link).toHaveAttribute("target", "_blank");
-    expect(link).toHaveAttribute("rel", "noopener noreferrer");
-  });
-
-  it("when website is null, then brewery website section is not rendered", async () => {
-    setupSupabase(
-      makeFixture({
-        brewery: "배상면주가",
-        website: null,
-      }),
-    );
-
-    renderWithProviders(
-      <Routes>
-        <Route path="/makgeolli/:id" element={<Detail />} />
-      </Routes>,
-      { route: "/makgeolli/fixture-id" },
-    );
-
     await screen.findByText("느린마을 막걸리");
     expect(screen.queryByTestId("brewery-website")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "배상면주가" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("when detail loaded, mounts DetailCommentsSection with the makgeolli id", async () => {
+  it("when detail loaded, mounts EvaluationSection", async () => {
     setupSupabase(makeFixture({ id: "fixture-id" }));
 
     renderWithProviders(
@@ -302,11 +289,12 @@ describe("Detail page", () => {
       { route: "/makgeolli/fixture-id" },
     );
 
-    const stub = await screen.findByTestId("detail-comments-stub");
-    expect(stub).toHaveAttribute("data-makgeolli-id", "fixture-id");
+    expect(
+      await screen.findByTestId("evaluation-section"),
+    ).toBeInTheDocument();
   });
 
-  it("when fetched data is null (not found), then DetailCommentsSection is not mounted", async () => {
+  it("when fetched data is null (not found), then EvaluationSection is not mounted", async () => {
     setupSupabase(null);
 
     renderWithProviders(
@@ -317,6 +305,6 @@ describe("Detail page", () => {
     );
 
     await screen.findByText("막걸리를 찾을 수 없습니다");
-    expect(screen.queryByTestId("detail-comments-stub")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("evaluation-section")).not.toBeInTheDocument();
   });
 });

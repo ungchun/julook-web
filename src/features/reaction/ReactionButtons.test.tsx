@@ -41,11 +41,12 @@ describe("ReactionButtons", () => {
 
     renderWithProviders(<ReactionButtons makgeolliId={MAKGEOLLI_ID} />);
 
+    // 본앱 ReactionButton 미러로 카운트 텍스트는 버튼 라벨에 미포함 (evaluationBar 별도 영역)
     expect(
-      await screen.findByRole("button", { name: /좋아요.*5/ }),
+      await screen.findByRole("button", { name: /좋았어요/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /싫어요.*2/ }),
+      screen.getByRole("button", { name: /아쉬워요/ }),
     ).toBeInTheDocument();
   });
 
@@ -58,7 +59,7 @@ describe("ReactionButtons", () => {
 
     renderWithProviders(<ReactionButtons makgeolliId={MAKGEOLLI_ID} />);
 
-    const likeButton = await screen.findByRole("button", { name: /좋아요/ });
+    const likeButton = await screen.findByRole("button", { name: /좋았어요/ });
     await userEvent.click(likeButton);
 
     await waitFor(() => {
@@ -80,7 +81,7 @@ describe("ReactionButtons", () => {
 
     renderWithProviders(<ReactionButtons makgeolliId={MAKGEOLLI_ID} />);
 
-    const likeButton = await screen.findByRole("button", { name: /좋아요/ });
+    const likeButton = await screen.findByRole("button", { name: /좋았어요/ });
     await userEvent.click(likeButton);
 
     await waitFor(() => {
@@ -102,7 +103,7 @@ describe("ReactionButtons", () => {
     renderWithProviders(<ReactionButtons makgeolliId={MAKGEOLLI_ID} />);
 
     const dislikeButton = await screen.findByRole("button", {
-      name: /싫어요/,
+      name: /아쉬워요/,
     });
     await userEvent.click(dislikeButton);
 

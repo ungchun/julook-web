@@ -17,8 +17,10 @@
   --color-w-25: rgba(229, 229, 255, 0.25);
   --color-w-10: rgba(229, 229, 255, 0.1);
 
-  /* 다크 베이스 (앱 배경) */
-  --color-dark-base: #151a1a;
+  /* 다크 베이스 (앱 배경) — iOS DesignSystem darkbase.colorset = #15151A */
+  --color-dark-base: #15151a;
+  /* 페이지들이 --color-darkbase 로 참조하던 typo 호환 alias */
+  --color-darkbase: #15151a;
   --color-dark-gray: #202028;
   --color-dark-window: rgba(21, 21, 26, 0.75);
 
