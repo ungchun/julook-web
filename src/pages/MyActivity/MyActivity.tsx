@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MakgeolliCard } from "@/features/makgeolli-list";
+import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
   useMyAllActivity,
   useMyReactionActivity,
@@ -55,7 +55,7 @@ function CardPane({
     return (
       <div className={styles.list}>
         {items.map((item) => (
-          <MakgeolliCard
+          <MakgeolliGridCard
             key={item.makgeolli.id}
             makgeolli={item.makgeolli as never}
             onClick={() => onCardClick(item.makgeolli.id)}
@@ -80,6 +80,18 @@ export function MyActivity() {
   const favorites = useFavoriteMakgeollis();
   const favoriteItems = favorites.data?.map((m) => ({ makgeolli: m }));
 
+  // 전체 탭 — reaction/comment 합집합에 "찜 only" 막걸리를 dedup 추가.
+  // 찜은 timestamp 가 없어 활동 항목 가장 위(가장 최근)로 배치.
+  const allWithFavorites = useMemo(() => {
+    const base = all.data;
+    if (base == null) return base;
+    const existing = new Set(base.map((i) => i.makgeolli.id));
+    const favOnly = (favorites.data ?? [])
+      .filter((m) => !existing.has(m.id))
+      .map((m) => ({ makgeolli: m, lastActivityAt: "9999-12-31T00:00:00Z" }));
+    return [...favOnly, ...base];
+  }, [all.data, favorites.data]);
+
   const handleSelect = (tab: ActivityTab) => {
     if (tab === "all") {
       setSearchParams({});
@@ -103,7 +115,7 @@ export function MyActivity() {
           isLoading={all.isLoading}
           isError={all.isError}
           onRetry={() => all.refetch()}
-          items={all.data}
+          items={allWithFavorites}
           emptyMessage="활동 기록이 없어요"
           onCardClick={goDetail}
         />

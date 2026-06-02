@@ -143,6 +143,76 @@ describe("MyActivity page", () => {
     expect(await screen.findByText("느린마을")).toBeInTheDocument();
   });
 
+  it("전체 탭 — reaction/comment 없어도 찜한 막걸리는 카드로 표시된다", async () => {
+    useMyAllActivityRef.current = [];
+    useFavoriteMakgeollisRef.current = [
+      {
+        id: "fav-only-1",
+        name: "찜만한막걸리",
+        brewery: null,
+        website: null,
+        awards: null,
+        sweetness: null,
+        sourness: null,
+        thickness: null,
+        carbonation: null,
+        has_sweetener: null,
+        ingredients: null,
+        alcohol_percentage: null,
+        image_name: null,
+        created_at: null,
+        updated_at: null,
+      },
+    ];
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity" },
+    );
+
+    expect(await screen.findByText("찜만한막걸리")).toBeInTheDocument();
+    expect(
+      screen.queryByText("활동 기록이 없어요"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("전체 탭 — reaction 과 찜이 같은 막걸리면 중복 없이 1장만 표시", async () => {
+    useMyAllActivityRef.current = [
+      makeItem({ makgeolliId: "dup_1", name: "중복막걸리" }),
+    ];
+    useFavoriteMakgeollisRef.current = [
+      {
+        id: "dup_1",
+        name: "중복막걸리",
+        brewery: null,
+        website: null,
+        awards: null,
+        sweetness: null,
+        sourness: null,
+        thickness: null,
+        carbonation: null,
+        has_sweetener: null,
+        ingredients: null,
+        alcohol_percentage: null,
+        image_name: null,
+        created_at: null,
+        updated_at: null,
+      },
+    ];
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity" },
+    );
+
+    await screen.findByText("중복막걸리");
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(1);
+  });
+
   it("when ?tab=favorite + 찜 없음 → '찜한 막걸리가 없어요' empty", async () => {
     useFavoriteMakgeollisRef.current = [];
 
@@ -173,7 +243,7 @@ describe("MyActivity page", () => {
 
     await screen.findByText("느린마을");
     expect(screen.getByText("지평")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
   });
 
   it("when '좋아요' tab clicked, URL changes to ?tab=like and like content is shown", async () => {
@@ -226,7 +296,7 @@ describe("MyActivity page", () => {
     );
 
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-card"));
+    await user.click(screen.getByTestId("makgeolli-grid-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });
@@ -249,7 +319,7 @@ describe("MyActivity page", () => {
 
     await screen.findByText("느린마을");
     expect(screen.getByText("지평")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
   });
 
   it("when ?tab=dislike, renders cards from useMyReactionActivity('dislike')", async () => {
@@ -268,7 +338,7 @@ describe("MyActivity page", () => {
     );
 
     await screen.findByText("별로별로");
-    expect(screen.getAllByTestId("makgeolli-card")).toHaveLength(1);
+    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(1);
   });
 
   it("when ?tab=comment, renders CommentRow list from useMyCommentActivity", async () => {

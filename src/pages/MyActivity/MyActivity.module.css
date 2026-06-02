@@ -15,8 +15,9 @@
 
 .list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  /* Filter / Awards / Search 그리드와 동일 — 앱 전체 일관성 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
 }
 
 .commentList {
