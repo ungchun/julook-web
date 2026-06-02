@@ -54,7 +54,7 @@ export function Search() {
           className={styles.input}
           value={rawQuery}
           onChange={(e) => setRawQuery(e.target.value)}
-          placeholder="막걸리 이름"
+          placeholder="막걸리 이름, 양조장 ..."
         />
         {rawQuery.length > 0 && (
           <button
@@ -81,7 +81,9 @@ export function Search() {
         />
       )}
       {debouncedQuery.length === 0 && recent.items.length === 0 && (
-        <EmptyState message="막걸리 이름을 검색해 보세요" />
+        <div className={styles.centerSlot}>
+          <EmptyState message="막걸리 이름으로 검색해보세요!" />
+        </div>
       )}
       {debouncedQuery.length > 0 && isLoading && <LoadingState />}
       {debouncedQuery.length > 0 && isError && (

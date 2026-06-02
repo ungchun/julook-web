@@ -74,7 +74,7 @@ describe("Search page", () => {
 
     expect(screen.getByRole("searchbox")).toBeInTheDocument();
     expect(
-      screen.getByText("막걸리 이름을 검색해 보세요"),
+      screen.getByText("막걸리 이름으로 검색해보세요!"),
     ).toBeInTheDocument();
   });
 
@@ -127,7 +127,7 @@ describe("Search page", () => {
     await user.click(screen.getByRole("button", { name: "지우기" }));
     expect(input.value).toBe("");
     expect(
-      screen.getByText("막걸리 이름을 검색해 보세요"),
+      screen.getByText("막걸리 이름으로 검색해보세요!"),
     ).toBeInTheDocument();
   });
 
@@ -185,7 +185,7 @@ describe("Search page", () => {
     expect(screen.getByText("느린마을")).toBeInTheDocument();
     expect(screen.getByText("지평")).toBeInTheDocument();
     expect(
-      screen.queryByText("막걸리 이름을 검색해 보세요"),
+      screen.queryByText("막걸리 이름으로 검색해보세요!"),
     ).not.toBeInTheDocument();
   });
 

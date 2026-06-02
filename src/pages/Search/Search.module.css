@@ -56,3 +56,13 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
 }
+
+/* 검색어 없는 빈 상태에서 EmptyState 일러스트를 화면 가운데 표시.
+   main 이 column flex + min-height 100vh 이라 자식 flex:1 로 남은 공간 차지. */
+.centerSlot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
