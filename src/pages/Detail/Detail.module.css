@@ -8,14 +8,37 @@
   padding-bottom: 60px;
 }
 
-/* iOS InformationView+NavigationBar 미러 — height 40, top 4 (찜 제거하여 우측 close만)
+/* iOS InformationView+NavigationBar 미러 — 좌측 하트(찜) + 우측 close.
    nav 아래 spacing은 header padding-top 만 사용 (이중 spacing 제거) */
 .navBar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   height: 40px;
   margin: var(--space-1) 0 0;
+}
+
+.heartButton {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-w-25);
+  transition: color 120ms ease-out;
+}
+
+.heartActive {
+  color: #ff3b30;
+}
+
+.heartIcon {
+  width: 24px;
+  height: 24px;
 }
 
 .closeButton {

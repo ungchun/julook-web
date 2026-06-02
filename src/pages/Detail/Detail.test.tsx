@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { renderWithProviders } from "@/test/utils";
 import { Detail } from "./Detail";
@@ -31,6 +32,18 @@ vi.mock("@/features/reaction", () => ({
   ReactionButtons: () => null,
 }));
 
+// useFavorites 는 별도 단위 검증 — Detail 통합 테스트에선 favoriteState/toggle 만 주입.
+const favoritesToggleMock = vi.fn();
+const favoritesIsFavoriteRef = { current: (id: string) => Boolean(id) && false };
+
+vi.mock("@/features/favorites", () => ({
+  useFavorites: () => ({
+    favorites: [],
+    isFavorite: (id: string) => favoritesIsFavoriteRef.current(id),
+    toggle: (id: string) => favoritesToggleMock(id),
+  }),
+}));
+
 // EvaluationSection 은 별도 시나리오 — Detail 통합 테스트에선 mount 확인만.
 vi.mock("@/features/makgeolli-detail", async (importOriginal) => {
   const actual =
@@ -45,6 +58,7 @@ vi.mock("@/features/makgeolli-detail", async (importOriginal) => {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  favoritesIsFavoriteRef.current = () => false;
 });
 
 // 헬퍼: 모든 필드 null로 초기화한 fixture
@@ -292,6 +306,53 @@ describe("Detail page", () => {
     expect(
       await screen.findByTestId("evaluation-section"),
     ).toBeInTheDocument();
+  });
+
+  it("nav 좌측에 찜 버튼이 렌더되고, 초기 비찜 상태에선 aria-label '찜하기'", async () => {
+    setupSupabase(makeFixture({ id: "fav-1" }));
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/makgeolli/:id" element={<Detail />} />
+      </Routes>,
+      { route: "/makgeolli/fav-1" },
+    );
+
+    await screen.findByText("느린마을 막걸리");
+    expect(
+      screen.getByRole("button", { name: "찜하기" }),
+    ).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("찜 버튼 클릭 시 useFavorites.toggle(makgeolliId) 가 호출된다", async () => {
+    setupSupabase(makeFixture({ id: "fav-2" }));
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/makgeolli/:id" element={<Detail />} />
+      </Routes>,
+      { route: "/makgeolli/fav-2" },
+    );
+
+    await user.click(await screen.findByRole("button", { name: "찜하기" }));
+    expect(favoritesToggleMock).toHaveBeenCalledWith("fav-2");
+  });
+
+  it("이미 찜한 상태에선 aria-label '찜 해제' + aria-pressed true", async () => {
+    favoritesIsFavoriteRef.current = (id) => id === "fav-3";
+    setupSupabase(makeFixture({ id: "fav-3" }));
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/makgeolli/:id" element={<Detail />} />
+      </Routes>,
+      { route: "/makgeolli/fav-3" },
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "찜 해제" }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 
   it("when fetched data is null (not found), then EvaluationSection is not mounted", async () => {
