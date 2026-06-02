@@ -27,6 +27,14 @@ vi.mock("@/features/my-activity", () => ({
   }),
 }));
 
+vi.mock("@/features/favorites", () => ({
+  useFavoriteMakgeollis: () => ({
+    data: useFavoriteMakgeollisRef.current,
+    isLoading: false,
+    isError: false,
+  }),
+}));
+
 vi.mock("@/shared/lib/identity", () => ({
   getOrCreateUserId: () => Promise.resolve(FIXED_USER_ID),
 }));
@@ -35,6 +43,7 @@ const useMyAllActivityRef: { current: unknown } = { current: undefined };
 const useMyLikedRef: { current: unknown } = { current: undefined };
 const useMyDislikedRef: { current: unknown } = { current: undefined };
 const useMyCommentsRef: { current: unknown } = { current: undefined };
+const useFavoriteMakgeollisRef: { current: unknown } = { current: undefined };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -42,6 +51,7 @@ beforeEach(() => {
   useMyLikedRef.current = undefined;
   useMyDislikedRef.current = undefined;
   useMyCommentsRef.current = undefined;
+  useFavoriteMakgeollisRef.current = undefined;
 });
 
 function makeItem(overrides: { makgeolliId?: string; name?: string }) {
@@ -94,6 +104,57 @@ describe("MyActivity page", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "코멘트" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "찜" })).toBeInTheDocument();
+  });
+
+  it("when ?tab=favorite, '찜' 탭이 활성 + useFavoriteMakgeollis 결과 카드 렌더", async () => {
+    useFavoriteMakgeollisRef.current = [
+      {
+        id: "fm_1",
+        name: "느린마을",
+        brewery: null,
+        website: null,
+        awards: null,
+        sweetness: null,
+        sourness: null,
+        thickness: null,
+        carbonation: null,
+        has_sweetener: null,
+        ingredients: null,
+        alcohol_percentage: null,
+        image_name: null,
+        created_at: null,
+        updated_at: null,
+      },
+    ];
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity?tab=favorite" },
+    );
+
+    expect(await screen.findByRole("button", { name: "찜" })).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+    expect(await screen.findByText("느린마을")).toBeInTheDocument();
+  });
+
+  it("when ?tab=favorite + 찜 없음 → '찜한 막걸리가 없어요' empty", async () => {
+    useFavoriteMakgeollisRef.current = [];
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity?tab=favorite" },
+    );
+
+    expect(
+      await screen.findByText("찜한 막걸리가 없어요"),
     ).toBeInTheDocument();
   });
 

@@ -1,12 +1,18 @@
 import styles from "./SubTabHeader.module.css";
 
-export type ActivityTab = "all" | "like" | "dislike" | "comment";
+export type ActivityTab =
+  | "all"
+  | "like"
+  | "dislike"
+  | "comment"
+  | "favorite";
 
 const TABS: ReadonlyArray<{ slug: ActivityTab; label: string }> = [
   { slug: "all", label: "전체" },
   { slug: "like", label: "좋아요" },
   { slug: "dislike", label: "싫어요" },
   { slug: "comment", label: "코멘트" },
+  { slug: "favorite", label: "찜" },
 ];
 
 type Props = {

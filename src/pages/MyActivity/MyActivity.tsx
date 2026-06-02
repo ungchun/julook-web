@@ -6,6 +6,7 @@ import {
   useMyReactionActivity,
   useMyCommentActivity,
 } from "@/features/my-activity";
+import { useFavoriteMakgeollis } from "@/features/favorites";
 import { CommentRow } from "@/shared/ui/CommentRow";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
@@ -13,7 +14,13 @@ import { LoadingState } from "@/shared/ui/LoadingState";
 import { SubTabHeader, type ActivityTab } from "./SubTabHeader";
 import styles from "./MyActivity.module.css";
 
-const VALID_TABS = new Set<ActivityTab>(["all", "like", "dislike", "comment"]);
+const VALID_TABS = new Set<ActivityTab>([
+  "all",
+  "like",
+  "dislike",
+  "comment",
+  "favorite",
+]);
 
 function parseTab(raw: string | null): ActivityTab {
   if (raw != null && (VALID_TABS as Set<string>).has(raw)) {
@@ -70,6 +77,8 @@ export function MyActivity() {
   const liked = useMyReactionActivity("like");
   const disliked = useMyReactionActivity("dislike");
   const comments = useMyCommentActivity();
+  const favorites = useFavoriteMakgeollis();
+  const favoriteItems = favorites.data?.map((m) => ({ makgeolli: m }));
 
   const handleSelect = (tab: ActivityTab) => {
     if (tab === "all") {
@@ -116,6 +125,16 @@ export function MyActivity() {
           onRetry={() => disliked.refetch()}
           items={disliked.data}
           emptyMessage="싫어요 한 막걸리가 없어요"
+          onCardClick={goDetail}
+        />
+      )}
+      {selected === "favorite" && (
+        <CardPane
+          isLoading={favorites.isLoading}
+          isError={favorites.isError}
+          onRetry={() => favorites.refetch()}
+          items={favoriteItems}
+          emptyMessage="찜한 막걸리가 없어요"
           onCardClick={goDetail}
         />
       )}
