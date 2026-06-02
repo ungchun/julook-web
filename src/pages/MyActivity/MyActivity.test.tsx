@@ -174,7 +174,7 @@ describe("MyActivity page", () => {
 
     expect(await screen.findByText("찜만한막걸리")).toBeInTheDocument();
     expect(
-      screen.queryByText("활동 기록이 없어요"),
+      screen.queryByText("비어있어요"),
     ).not.toBeInTheDocument();
   });
 
@@ -213,7 +213,7 @@ describe("MyActivity page", () => {
     expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(1);
   });
 
-  it("when ?tab=favorite + 찜 없음 → '찜한 막걸리가 없어요' empty", async () => {
+  it("when ?tab=favorite + 찜 없음 → '비어있어요' empty", async () => {
     useFavoriteMakgeollisRef.current = [];
 
     renderWithProviders(
@@ -224,7 +224,7 @@ describe("MyActivity page", () => {
     );
 
     expect(
-      await screen.findByText("찜한 막걸리가 없어요"),
+      await screen.findByText("비어있어요"),
     ).toBeInTheDocument();
   });
 
@@ -263,7 +263,7 @@ describe("MyActivity page", () => {
     // like 탭으로 전환되면 useMyReactionActivity('like') 결과(빈 배열)에 따라
     // EmptyState 가 표시됨
     expect(
-      await screen.findByText("좋아요 한 막걸리가 없어요"),
+      await screen.findByText("비어있어요"),
     ).toBeInTheDocument();
   });
 
@@ -368,7 +368,7 @@ describe("MyActivity page", () => {
     expect(screen.getByText("느린마을")).toBeInTheDocument();
   });
 
-  it("when ?tab=like and result is empty, renders '좋아요 한 막걸리가 없어요'", async () => {
+  it("when ?tab=like and result is empty, renders '비어있어요'", async () => {
     useMyLikedRef.current = [];
 
     renderWithProviders(
@@ -379,7 +379,7 @@ describe("MyActivity page", () => {
     );
 
     expect(
-      await screen.findByText("좋아요 한 막걸리가 없어요"),
+      await screen.findByText("비어있어요"),
     ).toBeInTheDocument();
   });
 });

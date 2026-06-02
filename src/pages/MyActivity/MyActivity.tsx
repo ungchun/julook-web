@@ -36,7 +36,6 @@ type CardPaneProps = {
   items:
     | { makgeolli: { id: string; name: string } }[]
     | undefined;
-  emptyMessage: string;
   onCardClick: (id: string) => void;
 };
 
@@ -45,7 +44,6 @@ function CardPane({
   isError,
   onRetry,
   items,
-  emptyMessage,
   onCardClick,
 }: CardPaneProps) {
   if (isError) {
@@ -65,7 +63,7 @@ function CardPane({
   if (items?.length === 0) {
     return (
       <div className={styles.centerSlot}>
-        <EmptyState message={emptyMessage} />
+        <EmptyState message="비어있어요" />
       </div>
     );
   }
@@ -134,7 +132,6 @@ export function MyActivity() {
           isError={all.isError}
           onRetry={() => all.refetch()}
           items={allWithFavorites}
-          emptyMessage="활동 기록이 없어요"
           onCardClick={goDetail}
         />
       )}
@@ -144,7 +141,6 @@ export function MyActivity() {
           isError={liked.isError}
           onRetry={() => liked.refetch()}
           items={liked.data}
-          emptyMessage="좋아요 한 막걸리가 없어요"
           onCardClick={goDetail}
         />
       )}
@@ -154,7 +150,6 @@ export function MyActivity() {
           isError={disliked.isError}
           onRetry={() => disliked.refetch()}
           items={disliked.data}
-          emptyMessage="싫어요 한 막걸리가 없어요"
           onCardClick={goDetail}
         />
       )}
@@ -164,7 +159,6 @@ export function MyActivity() {
           isError={favorites.isError}
           onRetry={() => favorites.refetch()}
           items={favoriteItems}
-          emptyMessage="찜한 막걸리가 없어요"
           onCardClick={goDetail}
         />
       )}
@@ -182,7 +176,7 @@ export function MyActivity() {
           )}
           {!comments.isError && comments.data?.length === 0 && (
             <div className={styles.centerSlot}>
-              <EmptyState message="작성한 코멘트가 없어요" />
+              <EmptyState message="비어있어요" />
             </div>
           )}
           {!comments.isError && comments.data != null && comments.data.length > 0 && (
