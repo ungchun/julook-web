@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
@@ -45,10 +45,14 @@ export function Search() {
     navigate(`/makgeolli/${id}`);
   };
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   // iOS SearchCore.searchSubmitted 미러 — 빈 검색어는 무시, 그렇지 않으면 add.
+  // submit 후 input.blur() 호출 — 모바일 키보드를 자동으로 내림.
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     void recent.add(rawQuery);
+    inputRef.current?.blur();
   };
 
   return (
@@ -56,6 +60,7 @@ export function Search() {
       <h1 className={styles.title}>검색</h1>
       <form className={styles.inputRow} onSubmit={handleSubmit}>
         <input
+          ref={inputRef}
           type="search"
           className={styles.input}
           value={rawQuery}
