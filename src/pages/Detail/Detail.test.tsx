@@ -34,7 +34,9 @@ vi.mock("@/features/reaction", () => ({
 
 // useFavorites 는 별도 단위 검증 — Detail 통합 테스트에선 favoriteState/toggle 만 주입.
 const favoritesToggleMock = vi.fn();
-const favoritesIsFavoriteRef = { current: (id: string) => Boolean(id) && false };
+const favoritesIsFavoriteRef: { current: (id: string) => boolean } = {
+  current: () => false,
+};
 
 vi.mock("@/features/favorites", () => ({
   useFavorites: () => ({

@@ -91,6 +91,30 @@
   color: var(--color-w-50);
 }
 
+.heartButton {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-w-25);
+  flex-shrink: 0;
+  transition: color 120ms ease-out;
+}
+
+.heartActive {
+  color: #ff3b30;
+}
+
+.heartIcon {
+  width: 22px;
+  height: 22px;
+}
+
 .divider {
   height: 1px;
   background-color: var(--color-w-10);

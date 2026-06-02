@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Makgeolli } from "@/shared/types";
 import { getMakgeolliImageUrl } from "@/shared/lib/makgeolli-image";
+import { useFavorites } from "@/features/favorites";
 import { useTopLiked } from "./use-top-liked";
 import styles from "./PopularSection.module.css";
 
@@ -23,11 +24,11 @@ function scoreSrc(value: number | null): string {
   return `/assets/score/${value}.svg`;
 }
 
-// iOS TodaysRankingView 미러 — 인기 막걸리 Top 3.
-// 사용자 액션(찜 토글)은 의도적으로 제외 (사용자 요청).
+// iOS TodaysRankingView 미러 — 인기 막걸리 Top 3 + 우측 찜 토글.
 export function PopularSection() {
   const { data } = useTopLiked();
   const navigate = useNavigate();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
 
   if (!data || data.length === 0) return null;
 
@@ -68,6 +69,34 @@ export function PopularSection() {
                     ))}
                   </div>
                 </div>
+                {(() => {
+                  const fav = isFavorite(makgeolli.id);
+                  return (
+                    <button
+                      type="button"
+                      className={`${styles.heartButton} ${fav ? styles.heartActive : ""}`}
+                      aria-label={fav ? "찜 해제" : "찜하기"}
+                      aria-pressed={fav}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void toggleFavorite(makgeolli.id);
+                      }}
+                    >
+                      <svg
+                        className={styles.heartIcon}
+                        viewBox="0 0 24 24"
+                        fill={fav ? "currentColor" : "none"}
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                    </button>
+                  );
+                })()}
               </div>
               {idx !== data.length - 1 && <div className={styles.divider} />}
             </Fragment>
