@@ -25,6 +25,16 @@
   flex-direction: column;
 }
 
+/* 비어있을 때 EmptyState / LoadingState / ErrorState 를 페이지 가운데에 표시.
+   main 이 column flex + min-height:100vh 이라 자식이 flex:1 로 남은 공간 차지. */
+.centerSlot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
 .divider {
   height: 1px;
   background-color: var(--color-w-10);

@@ -48,9 +48,27 @@ function CardPane({
   emptyMessage,
   onCardClick,
 }: CardPaneProps) {
-  if (isError) return <ErrorState onRetry={onRetry} />;
-  if (isLoading) return <LoadingState />;
-  if (items?.length === 0) return <EmptyState message={emptyMessage} />;
+  if (isError) {
+    return (
+      <div className={styles.centerSlot}>
+        <ErrorState onRetry={onRetry} />
+      </div>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className={styles.centerSlot}>
+        <LoadingState />
+      </div>
+    );
+  }
+  if (items?.length === 0) {
+    return (
+      <div className={styles.centerSlot}>
+        <EmptyState message={emptyMessage} />
+      </div>
+    );
+  }
   if (items != null && items.length > 0) {
     return (
       <div className={styles.list}>
@@ -152,10 +170,20 @@ export function MyActivity() {
       )}
       {selected === "comment" && (
         <>
-          {comments.isError && <ErrorState onRetry={() => comments.refetch()} />}
-          {!comments.isError && comments.isLoading && <LoadingState />}
+          {comments.isError && (
+            <div className={styles.centerSlot}>
+              <ErrorState onRetry={() => comments.refetch()} />
+            </div>
+          )}
+          {!comments.isError && comments.isLoading && (
+            <div className={styles.centerSlot}>
+              <LoadingState />
+            </div>
+          )}
           {!comments.isError && comments.data?.length === 0 && (
-            <EmptyState message="작성한 코멘트가 없어요" />
+            <div className={styles.centerSlot}>
+              <EmptyState message="작성한 코멘트가 없어요" />
+            </div>
           )}
           {!comments.isError && comments.data != null && comments.data.length > 0 && (
             <div className={styles.commentList}>
