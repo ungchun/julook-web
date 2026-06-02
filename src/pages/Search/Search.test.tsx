@@ -281,6 +281,39 @@ describe("Search page", () => {
     });
   });
 
+  it("Enter 키 입력 시 현재 검색어가 최근 검색어로 저장된다", async () => {
+    const user = userEvent.setup();
+    useSearchRef.current = () => ({ data: [], isLoading: false });
+
+    renderWithProviders(<Search />);
+
+    await waitFor(() => {
+      expect(loadRecentSearchesMock).toHaveBeenCalled();
+    });
+
+    const input = screen.getByRole("searchbox") as HTMLInputElement;
+    await user.type(input, "장수{Enter}");
+
+    await waitFor(() => {
+      expect(saveRecentSearchesMock).toHaveBeenCalledWith(["장수"]);
+    });
+  });
+
+  it("빈 검색어로 Enter 누르면 저장하지 않는다", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Search />);
+
+    await waitFor(() => {
+      expect(loadRecentSearchesMock).toHaveBeenCalled();
+    });
+
+    const input = screen.getByRole("searchbox");
+    await user.click(input);
+    await user.keyboard("{Enter}");
+
+    expect(saveRecentSearchesMock).not.toHaveBeenCalled();
+  });
+
   it("재진입(unmount → mount) 시 직전 검색어가 input 에 복원된다", async () => {
     const user = userEvent.setup();
     useSearchRef.current = () => ({ data: [], isLoading: false });

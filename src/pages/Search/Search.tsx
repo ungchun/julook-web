@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
@@ -45,10 +45,16 @@ export function Search() {
     navigate(`/makgeolli/${id}`);
   };
 
+  // iOS SearchCore.searchSubmitted 미러 — 빈 검색어는 무시, 그렇지 않으면 add.
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void recent.add(rawQuery);
+  };
+
   return (
     <main className={styles.main}>
       <h1 className={styles.title}>검색</h1>
-      <div className={styles.inputRow}>
+      <form className={styles.inputRow} onSubmit={handleSubmit}>
         <input
           type="search"
           className={styles.input}
@@ -66,7 +72,7 @@ export function Search() {
             ×
           </button>
         )}
-      </div>
+      </form>
 
       {debouncedQuery.length === 0 && recent.items.length > 0 && (
         <RecentSearches
