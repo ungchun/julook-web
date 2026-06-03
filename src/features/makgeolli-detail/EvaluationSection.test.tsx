@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@/test/utils";
 import { EvaluationSection } from "./EvaluationSection";
 import type { UserComment } from "@/shared/types";
@@ -62,5 +63,69 @@ describe("EvaluationSection", () => {
 
     expect(screen.queryByTestId("evaluation-comment-card")).not.toBeInTheDocument();
     expect(screen.getByText("아직 코멘트가 없어요")).toBeInTheDocument();
+  });
+
+  it("초기 렌더 시 AllPublicCommentsSheet 가 노출되지 않는다", () => {
+    const comments = [makeComment(0)];
+    useReactionMock.mockReturnValue({ counts: { like: 1, dislike: 0 } });
+    useDetailCommentsMock.mockReturnValue({
+      data: comments,
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
+    useCommentAuthorReactionsMock.mockReturnValue({ data: new Map() });
+
+    renderWithProviders(<EvaluationSection makgeolliId="m_1" />);
+
+    // 시트 타이틀("코멘트")이 노출되어 있지 않아야 함 (sheetOpen=false 초기 상태)
+    expect(
+      screen.queryByRole("button", { name: "닫기" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("카드를 탭하면 AllPublicCommentsSheet 가 등장한다 (코멘트 타이틀 + 닫기 버튼)", async () => {
+    const comments = [makeComment(0), makeComment(1)];
+    useReactionMock.mockReturnValue({ counts: { like: 2, dislike: 0 } });
+    useDetailCommentsMock.mockReturnValue({
+      data: comments,
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
+    useCommentAuthorReactionsMock.mockReturnValue({ data: new Map() });
+
+    renderWithProviders(<EvaluationSection makgeolliId="m_1" />);
+
+    const card = screen.getAllByTestId("evaluation-comment-card")[0];
+    await userEvent.click(card);
+
+    // 시트 등장 — 닫기 버튼 노출
+    expect(
+      screen.getByRole("button", { name: "닫기" }),
+    ).toBeInTheDocument();
+  });
+
+  it("시트의 닫기 버튼을 누르면 AllPublicCommentsSheet 가 사라진다", async () => {
+    const comments = [makeComment(0)];
+    useReactionMock.mockReturnValue({ counts: { like: 1, dislike: 0 } });
+    useDetailCommentsMock.mockReturnValue({
+      data: comments,
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
+    useCommentAuthorReactionsMock.mockReturnValue({ data: new Map() });
+
+    renderWithProviders(<EvaluationSection makgeolliId="m_1" />);
+
+    const card = screen.getAllByTestId("evaluation-comment-card")[0];
+    await userEvent.click(card);
+    expect(screen.getByRole("button", { name: "닫기" })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "닫기" }));
+    expect(
+      screen.queryByRole("button", { name: "닫기" }),
+    ).not.toBeInTheDocument();
   });
 });

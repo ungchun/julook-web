@@ -72,7 +72,8 @@
   display: none;
 }
 
-/* iOS publicCommentCard: 120x120 + padding 12 + dark-gray + cornerRadius 12 */
+/* iOS publicCommentCard: 120x120 + padding 12 + dark-gray + cornerRadius 12.
+   button 으로 전환 — 기본 border/text-align 리셋 + cursor pointer. */
 .card {
   flex-shrink: 0;
   display: flex;
@@ -82,7 +83,12 @@
   height: 120px;
   padding: 12px;
   background-color: var(--color-dark-gray);
+  border: 0;
   border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .cardReactionIcon {

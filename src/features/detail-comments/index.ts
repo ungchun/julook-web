@@ -1,3 +1,3 @@
-export { DetailCommentsSection } from "./DetailCommentsSection";
+export { AllPublicCommentsSheet } from "./AllPublicCommentsSheet";
 export { useDetailComments } from "./use-detail-comments";
 export { fetchDetailComments } from "./api";

@@ -12,7 +12,7 @@ type CommentRef = {
 
 // iOS InformationCore+Effects.loadUserReactionsEffect 미러 — 각 (userId, makgeolliId)
 // 페어를 병렬 fetch 하고 개별 실패는 null 로 흡수. RecentCommentsSection / AllComments /
-// DetailCommentsSection 의 작성자 reaction circle 표시용.
+// EvaluationSection / AllPublicCommentsSheet 의 작성자 reaction circle 표시용.
 export function useCommentAuthorReactions(
   comments: ReadonlyArray<CommentRef> | undefined,
 ): UseQueryResult<CommentAuthorReactionMap, Error> {

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useReaction } from "@/features/reaction/use-reaction";
 import { useCommentAuthorReactions } from "@/features/reaction";
 import { reactionCircleIconSrc } from "@/features/reaction/icon";
 import { useDetailComments } from "@/features/detail-comments/use-detail-comments";
+import { AllPublicCommentsSheet } from "@/features/detail-comments/AllPublicCommentsSheet";
 import { formatDateMD } from "@/shared/lib/format-date";
 import styles from "./EvaluationSection.module.css";
 
@@ -17,6 +19,7 @@ export function EvaluationSection({ makgeolliId }: Props) {
   const { counts } = useReaction(makgeolliId);
   const { data: comments } = useDetailComments(makgeolliId);
   const { data: reactions } = useCommentAuthorReactions(comments);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const total = counts.like + counts.dislike;
   const hasData = total > 0;
@@ -65,10 +68,12 @@ export function EvaluationSection({ makgeolliId }: Props) {
           {displayed.map((c) => {
             const reactionType = reactions?.get(c.id) ?? null;
             return (
-              <article
+              <button
                 key={c.id}
+                type="button"
                 data-testid="evaluation-comment-card"
                 className={styles.card}
+                onClick={() => setSheetOpen(true)}
               >
                 <img
                   className={styles.cardReactionIcon}
@@ -79,7 +84,7 @@ export function EvaluationSection({ makgeolliId }: Props) {
                 <span className={styles.cardDate}>
                   {formatDateMD(c.created_at)}
                 </span>
-              </article>
+              </button>
             );
           })}
         </div>
@@ -88,6 +93,12 @@ export function EvaluationSection({ makgeolliId }: Props) {
           <span className={styles.emptyText}>아직 코멘트가 없어요</span>
         </div>
       )}
+
+      <AllPublicCommentsSheet
+        open={sheetOpen}
+        makgeolliId={makgeolliId}
+        onClose={() => setSheetOpen(false)}
+      />
     </section>
   );
 }

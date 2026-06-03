@@ -17,7 +17,8 @@ type Props = {
 };
 
 // RecentCommentsSection / AllComments 공통 row.
-// 단일 막걸리 페이지의 DetailCommentsSection 은 다른 구조라 흡수 안 함.
+// 단일 막걸리 페이지의 EvaluationSection 카드 / AllPublicCommentsSheet 행은
+// 다른 구조라 흡수 안 함.
 export function CommentRow({
   comment,
   makgeolli,
