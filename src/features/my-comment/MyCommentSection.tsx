@@ -75,26 +75,28 @@ export function MyCommentSection({ makgeolliId }: Props) {
         </>
       )}
 
-      <CommentEditorSheet
-        open={sheet.kind === "create"}
-        mode="create"
-        onSubmit={async (input) => {
-          await save.save(input);
-          setSheet({ kind: "none" });
-        }}
-        onCancel={() => setSheet({ kind: "none" })}
-      />
-      <CommentEditorSheet
-        open={sheet.kind === "edit"}
-        mode="edit"
-        initialContent={data?.comment}
-        initialIsPublic={data?.is_public}
-        onSubmit={async (input) => {
-          await save.save(input);
-          setSheet({ kind: "none" });
-        }}
-        onCancel={() => setSheet({ kind: "none" })}
-      />
+      {sheet.kind === "create" && (
+        <CommentEditorSheet
+          mode="create"
+          onSubmit={async (input) => {
+            await save.save(input);
+            setSheet({ kind: "none" });
+          }}
+          onCancel={() => setSheet({ kind: "none" })}
+        />
+      )}
+      {sheet.kind === "edit" && data != null && (
+        <CommentEditorSheet
+          mode="edit"
+          initialContent={data.comment}
+          initialIsPublic={data.is_public}
+          onSubmit={async (input) => {
+            await save.save(input);
+            setSheet({ kind: "none" });
+          }}
+          onCancel={() => setSheet({ kind: "none" })}
+        />
+      )}
       <CommentActionSheet
         open={sheet.kind === "action"}
         onEdit={() => setSheet({ kind: "edit" })}

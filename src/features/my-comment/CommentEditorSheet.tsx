@@ -2,7 +2,6 @@ import { useState, type ChangeEvent } from "react";
 import styles from "./CommentEditorSheet.module.css";
 
 type Props = {
-  open: boolean;
   mode: "create" | "edit";
   initialContent?: string;
   initialIsPublic?: boolean;
@@ -15,8 +14,10 @@ const PLACEHOLDER = "막걸리에 대한 생각을 자유롭게 적어주세요.
 
 // 전체 화면 sheet — iOS .sheet modifier + CommentSheetView 미러.
 // 폼 상태(text, isPublic) 는 useState 로컬. 저장 시점에 onSubmit 콜백.
+// 시트 표시 여부는 호출부의 conditional render 로 통제 (mount/unmount 사이클이
+// iOS .sheet(isPresented:) 의 자연 mount 동작을 미러). 그래야 매번 새 mount 시점에
+// initialContent / initialIsPublic 가 useState 초기값으로 반영된다.
 export function CommentEditorSheet({
-  open,
   mode,
   initialContent,
   initialIsPublic,
@@ -27,8 +28,6 @@ export function CommentEditorSheet({
   // 비공개 체크박스: checked === !isPublic. 기본값 = 전체공개 (isPublic=true).
   const [isPublic, setIsPublic] = useState(initialIsPublic ?? true);
   const [saving, setSaving] = useState(false);
-
-  if (!open) return null;
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     // iOS prefix(200) 미러 — 입력 시점에 hard limit.

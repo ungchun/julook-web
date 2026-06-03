@@ -144,4 +144,86 @@ describe("MyCommentSection", () => {
       expect(screen.getByText("삭제하기")).toBeInTheDocument();
     });
   });
+
+  // ── Phase 1 RED: 프리필 버그 재현 케이스 ─────────────────────────────────
+  // iOS CommentSheetView.onAppear 미러. 호출부에서 EditorSheet 가 unmount→
+  // mount 사이클을 거치면서 매번 새 initialContent / initialIsPublic 로
+  // useState 초기화되어야 한다. 현재 코드는 첫 mount 시점에 data==null 이므로
+  // useState 가 "" / true 로 영구 고정 → RED.
+  it("when '수정하기' is tapped in action sheet, edit sheet prefills existing comment text and isPublic", async () => {
+    fetchMyCommentMock.mockResolvedValue({
+      id: "c1",
+      user_id: FIXED_USER_ID,
+      makgeolli_id: MAKGEOLLI_ID,
+      comment: "기존 텍스트",
+      is_public: false,
+      created_at: "2025-04-15T12:00:00Z",
+      updated_at: "2025-04-15T12:00:00Z",
+    });
+
+    renderWithProviders(<MyCommentSection makgeolliId={MAKGEOLLI_ID} />);
+
+    // 작성된 코멘트 박스의 "수정" 버튼 클릭 → ActionSheet 등장
+    const editButton = await screen.findByRole("button", { name: "수정" });
+    await userEvent.click(editButton);
+
+    // ActionSheet 내 "수정하기" 클릭 → EditorSheet (mode=edit) 등장
+    const editAction = await screen.findByText("수정하기");
+    await userEvent.click(editAction);
+
+    // mode=edit 타이틀 확인
+    expect(await screen.findByText("코멘트 수정")).toBeInTheDocument();
+
+    // textarea 가 기존 코멘트 본문으로 프리필되어야 한다.
+    expect(screen.getByDisplayValue("기존 텍스트")).toBeInTheDocument();
+
+    // is_public=false → 비공개 체크박스 checked.
+    const privateCheckbox = screen.getByRole("checkbox", { name: /비공개/ });
+    expect(privateCheckbox).toBeChecked();
+  });
+
+  // ── Phase 1 RED: create 시트 입력 잔존 회귀 방지 ──────────────────────────
+  // 옵션 A (호출부 conditional render) 적용 시 자연 통과되어야 함.
+  // 현재 코드는 EditorSheet 가 항상 mount 상태 → useState 가 살아있어 입력이
+  // 잔존 → RED.
+  it("does not retain previous create input after create sheet is canceled and reopened", async () => {
+    fetchMyCommentMock.mockResolvedValue(null);
+
+    renderWithProviders(<MyCommentSection makgeolliId={MAKGEOLLI_ID} />);
+
+    // 빈 박스 클릭 → create 시트 등장
+    const emptyBox = await screen.findByRole("button", {
+      name: /터치해서 코멘트를 남겨보세요/,
+    });
+    await userEvent.click(emptyBox);
+
+    expect(await screen.findByText("코멘트 남기기")).toBeInTheDocument();
+
+    // textarea 에 임시 입력
+    const ta = screen.getByPlaceholderText(
+      "막걸리에 대한 생각을 자유롭게 적어주세요.",
+    );
+    await userEvent.type(ta, "임시 입력");
+    expect(ta).toHaveValue("임시 입력");
+
+    // 취소 → 시트 닫힘
+    await userEvent.click(screen.getByRole("button", { name: "취소" }));
+    await waitFor(() => {
+      expect(screen.queryByText("코멘트 남기기")).not.toBeInTheDocument();
+    });
+
+    // 다시 빈 박스 클릭 → 시트 재오픈
+    const emptyBoxAgain = await screen.findByRole("button", {
+      name: /터치해서 코멘트를 남겨보세요/,
+    });
+    await userEvent.click(emptyBoxAgain);
+
+    expect(await screen.findByText("코멘트 남기기")).toBeInTheDocument();
+
+    // textarea 가 비어있어야 한다 (이전 입력 잔존 X).
+    const taReopened = screen.getByPlaceholderText(
+      "막걸리에 대한 생각을 자유롭게 적어주세요.",
+    );
+    expect(taReopened).toHaveValue("");
+  });
 });

@@ -15,7 +15,6 @@ describe("CommentEditorSheet", () => {
 
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={onSubmit}
         onCancel={onCancel}
@@ -29,7 +28,6 @@ describe("CommentEditorSheet", () => {
   it("when mode='create', title is '코멘트 남기기' and placeholder is shown", async () => {
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -45,7 +43,6 @@ describe("CommentEditorSheet", () => {
   it("when mode='edit', title is '코멘트 수정' and initial content/isPublic are prefilled", async () => {
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="edit"
         initialContent="이미 작성된 내용"
         initialIsPublic={false}
@@ -66,7 +63,6 @@ describe("CommentEditorSheet", () => {
 
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={onSubmit}
         onCancel={vi.fn()}
@@ -89,7 +85,6 @@ describe("CommentEditorSheet", () => {
 
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={onSubmit}
         onCancel={vi.fn()}
@@ -117,7 +112,6 @@ describe("CommentEditorSheet", () => {
 
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={onSubmit}
         onCancel={vi.fn()}
@@ -145,7 +139,6 @@ describe("CommentEditorSheet", () => {
 
     renderWithProviders(
       <CommentEditorSheet
-        open
         mode="create"
         onSubmit={vi.fn()}
         onCancel={onCancel}
