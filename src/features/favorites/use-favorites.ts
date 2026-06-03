@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { loadFavorites, saveFavorites } from "@/shared/lib/favorites-storage";
+import { invalidateMyActivityCaches } from "@/features/my-activity/lib/invalidate-my-activity-caches";
 
 const FAVORITES_KEY = ["favorites"] as const;
 
@@ -32,6 +33,9 @@ export function useFavorites(): UseFavoritesResult {
     },
     onSuccess: (next) => {
       queryClient.setQueryData<string[]>(FAVORITES_KEY, next);
+      // iOS InformationCore+Effects.swift:45-57 의 favoriteStatusChanged
+      // → MainCoordinator.refreshMyMakgeollis 미러. list 일관성 보강.
+      invalidateMyActivityCaches(queryClient);
     },
   });
 

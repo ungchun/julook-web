@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUserId } from "@/shared/lib/use-user-id";
+import { invalidateMyActivityCaches } from "@/features/my-activity/lib/invalidate-my-activity-caches";
 import type { ReactionType } from "@/shared/types";
 import {
   fetchUserReaction,
@@ -46,6 +47,8 @@ export function useReaction(makgeolliId: string): UseReactionResult {
       queryClient.invalidateQueries({
         queryKey: ["reaction", "counts", makgeolliId],
       });
+      // iOS InformationCore+Effects.swift:78-90 의 .reactionSaved → refreshMyMakgeollis 미러.
+      invalidateMyActivityCaches(queryClient);
     },
   });
 

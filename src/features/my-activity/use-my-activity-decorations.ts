@@ -31,7 +31,7 @@ export function useMyActivityDecorations(): UseMyActivityDecorationsResult {
   const { favorites } = useFavorites();
 
   const reactionsQuery = useQuery({
-    queryKey: ["my-activity-decorations", "reactions", userId],
+    queryKey: ["my-activity", "decorations", "reactions", userId],
     queryFn: async (): Promise<ReactionRow[]> => {
       const { data, error } = await supabase
         .from("makgeolli_reactions")
@@ -44,7 +44,7 @@ export function useMyActivityDecorations(): UseMyActivityDecorationsResult {
   });
 
   const commentsQuery = useQuery({
-    queryKey: ["my-activity-decorations", "comments", userId],
+    queryKey: ["my-activity", "decorations", "comments", userId],
     queryFn: async (): Promise<CommentIdRow[]> => {
       const { data, error } = await supabase
         .from("user_comments")

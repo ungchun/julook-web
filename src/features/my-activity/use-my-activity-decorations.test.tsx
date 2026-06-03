@@ -179,4 +179,102 @@ describe("useMyActivityDecorations", () => {
     });
     expect(result.current.data).toBeUndefined();
   });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Phase 1 RED — queryKey 일원화 검증 (옵션 B).
+  // 두 decoration 의 queryKey 가 ["my-activity", "decorations", ...] prefix 를
+  // 따르도록 변경되어야 한다. 현재 키 ["my-activity-decorations", ...] → 본 테스트 실패.
+  // 이 prefix 변경으로 invalidateCommentCaches 와 invalidateMyActivityCaches 의
+  // ["my-activity"] prefix invalidate 가 decoration 까지 매칭된다.
+  // ───────────────────────────────────────────────────────────────────────────
+  describe("queryKey 일원화 (my-activity prefix)", () => {
+    it("uses ['my-activity', 'decorations', 'reactions', userId] as reactions queryKey", async () => {
+      const reactions = setupReactionsChain({ data: [], error: null });
+      const comments = setupCommentsChain({ data: [], error: null });
+      fromMock.mockImplementation((table: string) => {
+        if (table === "makgeolli_reactions")
+          return { select: reactions.selectMock };
+        if (table === "user_comments") return { select: comments.selectMock };
+        return {};
+      });
+      useFavoritesMock.mockReturnValue({ favorites: [] });
+
+      // QueryClient 를 직접 주입해 cache 에서 queryKey 를 확인.
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      function Wrapper({ children }: { children: ReactNode }) {
+        return (
+          <QueryClientProvider client={client}>{children}</QueryClientProvider>
+        );
+      }
+
+      const { result } = renderHook(() => useMyActivityDecorations(), {
+        wrapper: Wrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.data).toBeDefined();
+      });
+
+      const reactionsQuery = client
+        .getQueryCache()
+        .find({
+          queryKey: ["my-activity", "decorations", "reactions", FIXED_USER_ID],
+        });
+      expect(reactionsQuery).toBeDefined();
+    });
+
+    it("uses ['my-activity', 'decorations', 'comments', userId] as comments queryKey", async () => {
+      const reactions = setupReactionsChain({ data: [], error: null });
+      const comments = setupCommentsChain({ data: [], error: null });
+      fromMock.mockImplementation((table: string) => {
+        if (table === "makgeolli_reactions")
+          return { select: reactions.selectMock };
+        if (table === "user_comments") return { select: comments.selectMock };
+        return {};
+      });
+      useFavoritesMock.mockReturnValue({ favorites: [] });
+
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      function Wrapper({ children }: { children: ReactNode }) {
+        return (
+          <QueryClientProvider client={client}>{children}</QueryClientProvider>
+        );
+      }
+
+      const { result } = renderHook(() => useMyActivityDecorations(), {
+        wrapper: Wrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.data).toBeDefined();
+      });
+
+      const commentsQuery = client
+        .getQueryCache()
+        .find({
+          queryKey: ["my-activity", "decorations", "comments", FIXED_USER_ID],
+        });
+      expect(commentsQuery).toBeDefined();
+    });
+
+    // NOTE: "decoration query 가 ['my-activity'] prefix invalidate 로 무효화된다"는
+    // 통합 케이스는 의도가 두 갈래로 분해되어 다른 곳에서 더 안정적으로 검증된다:
+    //   (a) decoration queryKey 가 ['my-activity', 'decorations', ...] prefix 를 갖는다
+    //       → 위 두 케이스 (lines 191, 228) 에서 직접 검증.
+    //   (b) ['my-activity'] 1회 invalidate 가 prefix matching 으로 더 긴 queryKey 까지
+    //       stale 처리한다 → src/features/my-activity/lib/invalidate-my-activity-caches.test.ts
+    //       의 "invalidation matches decoration queryKeys via prefix matching" 에서 검증.
+    //   (c) reaction mutation 성공 시 ['my-activity'] invalidate 가 호출된다
+    //       → src/features/reaction/use-reaction.test.tsx 에서 검증.
+    //
+    // 여기서 동일한 통합 케이스를 renderHook + 실제 active query 로 재현하려 하면
+    // React Query v5 의 active query auto-refetch 때문에 invalidate 직후 fetch 가
+    // 시작되고 성공하면 isInvalidated 가 즉시 false 로 리셋되어 비결정적이 된다.
+    // (a)+(b)+(c) 조합으로 동일 의도가 이미 deterministic 하게 커버되므로 통합
+    // 케이스는 의도적으로 생략한다.
+  });
 });
