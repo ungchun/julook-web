@@ -1,0 +1,59 @@
+/* iOS MyMakgeolliGridItem 미러:
+ * - darkgray bg, cornerRadius 18, padding horizontal 12 / vertical 20
+ * - VStack spacing 12: image (h120 aspectFit cornerRadius 12) / name SF12B / iconRow spacing 12 (16x16)
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 12px;
+  background-color: var(--color-dark-gray);
+  border-radius: 18px;
+  border: 0;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+}
+
+.imageBox {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.image {
+  max-height: 120px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-w);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1;
+}
+
+.iconRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}

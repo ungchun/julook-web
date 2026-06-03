@@ -1,13 +1,14 @@
-import { Fragment, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MakgeolliGridCard } from "@/features/makgeolli-list";
+import type { Makgeolli, ReactionType } from "@/shared/types";
 import {
+  MyActivityGridCard,
+  useMyActivityDecorations,
   useMyAllActivity,
-  useMyReactionActivity,
   useMyCommentActivity,
+  useMyReactionActivity,
 } from "@/features/my-activity";
 import { useFavoriteMakgeollis } from "@/features/favorites";
-import { CommentRow } from "@/shared/ui/CommentRow";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
@@ -29,13 +30,18 @@ function parseTab(raw: string | null): ActivityTab {
   return "all";
 }
 
+type Decorations = {
+  reactionByMakgeolliId: ReadonlyMap<string, ReactionType>;
+  commentSet: ReadonlySet<string>;
+  favoriteSet: ReadonlySet<string>;
+};
+
 type CardPaneProps = {
   isLoading: boolean;
   isError: boolean;
   onRetry: () => void;
-  items:
-    | { makgeolli: { id: string; name: string } }[]
-    | undefined;
+  items: { makgeolli: Makgeolli }[] | undefined;
+  decorations: Decorations | undefined;
   onCardClick: (id: string) => void;
 };
 
@@ -44,6 +50,7 @@ function CardPane({
   isError,
   onRetry,
   items,
+  decorations,
   onCardClick,
 }: CardPaneProps) {
   if (isError) {
@@ -71,9 +78,18 @@ function CardPane({
     return (
       <div className={styles.list}>
         {items.map((item) => (
-          <MakgeolliGridCard
+          <MyActivityGridCard
             key={item.makgeolli.id}
-            makgeolli={item.makgeolli as never}
+            makgeolli={item.makgeolli}
+            reactionType={
+              decorations?.reactionByMakgeolliId.get(item.makgeolli.id) ?? null
+            }
+            hasComment={
+              decorations?.commentSet.has(item.makgeolli.id) ?? false
+            }
+            isFavorite={
+              decorations?.favoriteSet.has(item.makgeolli.id) ?? false
+            }
             onClick={() => onCardClick(item.makgeolli.id)}
           />
         ))}
@@ -85,11 +101,12 @@ function CardPane({
 
 // /my-activity — iOS MyMakgeolliView 미러. 5 sub-탭(전체/좋아요/싫어요/코멘트/찜).
 //
-// 코멘트 탭의 카드 클릭 동작:
-//   다른 탭과 동일하게 Detail (/makgeolli/:id) 로 이동한다.
-//   iOS MyMakgeolliCore.swift:128-130 의 `.myMakgeolliItemTapped → fetchMakgeolliDetailEffect`
-//   가 모든 탭에서 동일 분기를 사용하므로 Web 도 통일.
-//   수정/삭제 진입점은 Detail 의 MyCommentSection 단일 경로.
+// 모든 탭이 동일한 MyActivityGridCard 를 그리는 단일 렌더 경로.
+// decoration(reaction/comment/favorite) 은 페이지 단의 useMyActivityDecorations 가
+// 1회 호출로 통합 fetch, 각 카드에 props 로 주입 (N+1 회피).
+//
+// 코멘트 탭도 본문이 아닌 그리드 카드만 표시 — iOS MyMakgeolliView ForEach
+// 단일 분기 미러. 본문 확인은 카드 탭 → Detail(/makgeolli/:id) 진입.
 export function MyActivity() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -100,7 +117,18 @@ export function MyActivity() {
   const disliked = useMyReactionActivity("dislike");
   const comments = useMyCommentActivity();
   const favorites = useFavoriteMakgeollis();
-  const favoriteItems = favorites.data?.map((m) => ({ makgeolli: m }));
+  const decorations = useMyActivityDecorations();
+
+  const favoriteItems = useMemo(
+    () => favorites.data?.map((m) => ({ makgeolli: m })),
+    [favorites.data],
+  );
+
+  // 코멘트 탭 — { comment, makgeolli } → { makgeolli } 어댑트로 단일 렌더 경로 통일.
+  const commentItems = useMemo(
+    () => comments.data?.map((c) => ({ makgeolli: c.makgeolli })),
+    [comments.data],
+  );
 
   // 전체 탭 — reaction/comment 합집합에 "찜 only" 막걸리를 dedup 추가.
   // 찜은 timestamp 가 없어 활동 항목 가장 위(가장 최근)로 배치.
@@ -122,7 +150,8 @@ export function MyActivity() {
     }
   };
 
-  const goDetail = (makgeolliId: string) => navigate(`/makgeolli/${makgeolliId}`);
+  const goDetail = (makgeolliId: string) =>
+    navigate(`/makgeolli/${makgeolliId}`);
 
   return (
     <main
@@ -138,6 +167,7 @@ export function MyActivity() {
           isError={all.isError}
           onRetry={() => all.refetch()}
           items={allWithFavorites}
+          decorations={decorations.data}
           onCardClick={goDetail}
         />
       )}
@@ -147,6 +177,7 @@ export function MyActivity() {
           isError={liked.isError}
           onRetry={() => liked.refetch()}
           items={liked.data}
+          decorations={decorations.data}
           onCardClick={goDetail}
         />
       )}
@@ -156,6 +187,7 @@ export function MyActivity() {
           isError={disliked.isError}
           onRetry={() => disliked.refetch()}
           items={disliked.data}
+          decorations={decorations.data}
           onCardClick={goDetail}
         />
       )}
@@ -165,43 +197,19 @@ export function MyActivity() {
           isError={favorites.isError}
           onRetry={() => favorites.refetch()}
           items={favoriteItems}
+          decorations={decorations.data}
           onCardClick={goDetail}
         />
       )}
       {selected === "comment" && (
-        <>
-          {comments.isError && (
-            <div className={styles.centerSlot}>
-              <ErrorState onRetry={() => comments.refetch()} />
-            </div>
-          )}
-          {!comments.isError && comments.isLoading && (
-            <div className={styles.centerSlot}>
-              <LoadingState />
-            </div>
-          )}
-          {!comments.isError && comments.data?.length === 0 && (
-            <div className={styles.centerSlot}>
-              <EmptyState message="비어있어요" />
-            </div>
-          )}
-          {!comments.isError && comments.data != null && comments.data.length > 0 && (
-            <div className={styles.commentList}>
-              {comments.data.map((item, idx) => (
-                <Fragment key={item.comment.id}>
-                  <CommentRow
-                    comment={item.comment}
-                    makgeolli={item.makgeolli}
-                    onClick={() => goDetail(item.makgeolli.id)}
-                  />
-                  {idx !== comments.data.length - 1 && (
-                    <div className={styles.divider} />
-                  )}
-                </Fragment>
-              ))}
-            </div>
-          )}
-        </>
+        <CardPane
+          isLoading={comments.isLoading}
+          isError={comments.isError}
+          onRetry={() => comments.refetch()}
+          items={commentItems}
+          decorations={decorations.data}
+          onCardClick={goDetail}
+        />
       )}
     </main>
   );

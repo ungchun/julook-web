@@ -25,6 +25,30 @@ vi.mock("@/features/my-activity", () => ({
     data: useMyCommentsRef.current,
     isLoading: false,
   }),
+  useMyActivityDecorations: () => ({
+    data: useMyActivityDecorationsRef.current,
+    isLoading: useMyActivityDecorationsRef.current == null,
+    isError: false,
+  }),
+  MyActivityGridCard: (props: {
+    makgeolli: { id: string; name: string };
+    reactionType: "like" | "dislike" | null;
+    hasComment: boolean;
+    isFavorite: boolean;
+    onClick?: () => void;
+  }) => (
+    <button
+      type="button"
+      data-testid="my-activity-grid-card"
+      data-makgeolli-id={props.makgeolli.id}
+      data-reaction-type={props.reactionType ?? "none"}
+      data-has-comment={String(props.hasComment)}
+      data-is-favorite={String(props.isFavorite)}
+      onClick={props.onClick}
+    >
+      {props.makgeolli.name}
+    </button>
+  ),
 }));
 
 vi.mock("@/features/favorites", () => ({
@@ -44,6 +68,13 @@ const useMyLikedRef: { current: unknown } = { current: undefined };
 const useMyDislikedRef: { current: unknown } = { current: undefined };
 const useMyCommentsRef: { current: unknown } = { current: undefined };
 const useFavoriteMakgeollisRef: { current: unknown } = { current: undefined };
+type DecorationsFixture = {
+  reactionByMakgeolliId: ReadonlyMap<string, "like" | "dislike">;
+  commentSet: ReadonlySet<string>;
+  favoriteSet: ReadonlySet<string>;
+};
+const useMyActivityDecorationsRef: { current: DecorationsFixture | undefined } =
+  { current: undefined };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -52,6 +83,12 @@ beforeEach(() => {
   useMyDislikedRef.current = undefined;
   useMyCommentsRef.current = undefined;
   useFavoriteMakgeollisRef.current = undefined;
+  // 기본값: 활동 없음 (Map/Set empty). isLoading=false 로 카드 즉시 렌더.
+  useMyActivityDecorationsRef.current = {
+    reactionByMakgeolliId: new Map(),
+    commentSet: new Set(),
+    favoriteSet: new Set(),
+  };
 });
 
 function makeItem(overrides: { makgeolliId?: string; name?: string }) {
@@ -210,7 +247,7 @@ describe("MyActivity page", () => {
     );
 
     await screen.findByText("중복막걸리");
-    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(1);
+    expect(screen.getAllByTestId("my-activity-grid-card")).toHaveLength(1);
   });
 
   it("when ?tab=favorite + 찜 없음 → '비어있어요' empty", async () => {
@@ -243,7 +280,7 @@ describe("MyActivity page", () => {
 
     await screen.findByText("느린마을");
     expect(screen.getByText("지평")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("my-activity-grid-card")).toHaveLength(2);
   });
 
   it("when '좋아요' tab clicked, URL changes to ?tab=like and like content is shown", async () => {
@@ -296,7 +333,7 @@ describe("MyActivity page", () => {
     );
 
     await screen.findByText("느린마을");
-    await user.click(screen.getByTestId("makgeolli-grid-card"));
+    await user.click(screen.getByTestId("my-activity-grid-card"));
 
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });
@@ -319,7 +356,7 @@ describe("MyActivity page", () => {
 
     await screen.findByText("느린마을");
     expect(screen.getByText("지평")).toBeInTheDocument();
-    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
+    expect(screen.getAllByTestId("my-activity-grid-card")).toHaveLength(2);
   });
 
   it("when ?tab=dislike, renders cards from useMyReactionActivity('dislike')", async () => {
@@ -338,10 +375,12 @@ describe("MyActivity page", () => {
     );
 
     await screen.findByText("별로별로");
-    expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(1);
+    expect(screen.getAllByTestId("my-activity-grid-card")).toHaveLength(1);
   });
 
-  it("when ?tab=comment, renders CommentRow list from useMyCommentActivity", async () => {
+  it("when ?tab=comment, renders MyActivityGridCard (not CommentRow) for each comment item", async () => {
+    // iOS MyMakgeolliView ForEach 단일 분기 미러 — 코멘트 탭도 그리드 카드.
+    // 본문은 Detail 진입으로 확인하므로 카드에 본문 텍스트 노출 금지.
     useMyCommentsRef.current = [
       {
         comment: {
@@ -364,11 +403,16 @@ describe("MyActivity page", () => {
       { route: "/my-activity?tab=comment" },
     );
 
-    expect(await screen.findByText("내가 쓴 코멘트")).toBeInTheDocument();
+    // 카드 1개 렌더 + 막걸리 이름 노출 (코멘트 본문은 카드에 없음 = iOS 미러)
+    expect(
+      await screen.findByTestId("my-activity-grid-card"),
+    ).toBeInTheDocument();
     expect(screen.getByText("느린마을")).toBeInTheDocument();
+    // 코멘트 본문 텍스트는 더 이상 노출되지 않는다 (Detail 진입 단일 경로)
+    expect(screen.queryByText("내가 쓴 코멘트")).not.toBeInTheDocument();
   });
 
-  it("when ?tab=comment, clicking a comment row navigates to /makgeolli/:id (mirrors iOS myMakgeolliItemTapped)", async () => {
+  it("when ?tab=comment, clicking a card navigates to /makgeolli/:id (mirrors iOS myMakgeolliItemTapped)", async () => {
     useMyCommentsRef.current = [
       {
         comment: {
@@ -396,12 +440,12 @@ describe("MyActivity page", () => {
       { route: "/my-activity?tab=comment" },
     );
 
-    // CommentRow 가 렌더된 후 클릭
-    const commentBody = await screen.findByText("이동 테스트용 코멘트");
-    await user.click(commentBody);
+    // 카드 렌더 후 클릭
+    const card = await screen.findByTestId("my-activity-grid-card");
+    await user.click(card);
 
     // iOS MyMakgeolliCore .myMakgeolliItemTapped → fetchMakgeolliDetailEffect 와 동일하게
-    // Detail 화면(/makgeolli/:id) 으로 push 되어야 한다. ActionSheet 가 아니라 라우팅이 정답.
+    // Detail 화면(/makgeolli/:id) 으로 push 되어야 한다.
     expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
   });
 
@@ -418,5 +462,141 @@ describe("MyActivity page", () => {
     expect(
       await screen.findByText("비어있어요"),
     ).toBeInTheDocument();
+  });
+
+  // ── 신규: 5탭 통일 그리드카드 + decoration 전파 ────────────────
+  it("all tab renders MyActivityGridCard for each item with decoration props applied", async () => {
+    useMyAllActivityRef.current = [
+      makeItem({ makgeolliId: "m_1", name: "느린마을" }),
+      makeItem({ makgeolliId: "m_2", name: "지평" }),
+    ];
+    useMyActivityDecorationsRef.current = {
+      reactionByMakgeolliId: new Map([
+        ["m_1", "like"],
+        ["m_2", "dislike"],
+      ]),
+      commentSet: new Set(["m_1"]),
+      favoriteSet: new Set(["m_2"]),
+    };
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity" },
+    );
+
+    const cards = await screen.findAllByTestId("my-activity-grid-card");
+    expect(cards).toHaveLength(2);
+
+    const m1 = cards.find((c) => c.dataset.makgeolliId === "m_1")!;
+    const m2 = cards.find((c) => c.dataset.makgeolliId === "m_2")!;
+    expect(m1.dataset.reactionType).toBe("like");
+    expect(m1.dataset.hasComment).toBe("true");
+    expect(m1.dataset.isFavorite).toBe("false");
+    expect(m2.dataset.reactionType).toBe("dislike");
+    expect(m2.dataset.hasComment).toBe("false");
+    expect(m2.dataset.isFavorite).toBe("true");
+  });
+
+  it("comment tab renders MyActivityGridCard (not CommentRow) for each comment item", async () => {
+    useMyCommentsRef.current = [
+      {
+        comment: {
+          id: "c_1",
+          user_id: FIXED_USER_ID,
+          makgeolli_id: "m_1",
+          comment: "내가 쓴 코멘트 본문",
+          is_public: true,
+          created_at: "2025-04-01T00:00:00Z",
+          updated_at: "2025-04-02T00:00:00Z",
+        },
+        makgeolli: makeItem({ makgeolliId: "m_1", name: "느린마을" }).makgeolli,
+      },
+      {
+        comment: {
+          id: "c_2",
+          user_id: FIXED_USER_ID,
+          makgeolli_id: "m_2",
+          comment: "또 다른 코멘트",
+          is_public: true,
+          created_at: "2025-03-30T00:00:00Z",
+          updated_at: "2025-03-31T00:00:00Z",
+        },
+        makgeolli: makeItem({ makgeolliId: "m_2", name: "지평" }).makgeolli,
+      },
+    ];
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity?tab=comment" },
+    );
+
+    // 그리드 카드 2개로 렌더 (CommentRow 본문 노출 금지)
+    expect(
+      (await screen.findAllByTestId("my-activity-grid-card")).length,
+    ).toBe(2);
+    expect(screen.queryByText("내가 쓴 코멘트 본문")).not.toBeInTheDocument();
+    expect(screen.queryByText("또 다른 코멘트")).not.toBeInTheDocument();
+  });
+
+  it("favorite tab renders MyActivityGridCard for each favorite makgeolli", async () => {
+    useFavoriteMakgeollisRef.current = [
+      {
+        id: "fm_1",
+        name: "찜막걸리1",
+        brewery: null,
+        website: null,
+        awards: null,
+        sweetness: null,
+        sourness: null,
+        thickness: null,
+        carbonation: null,
+        has_sweetener: null,
+        ingredients: null,
+        alcohol_percentage: null,
+        image_name: null,
+        created_at: null,
+        updated_at: null,
+      },
+      {
+        id: "fm_2",
+        name: "찜막걸리2",
+        brewery: null,
+        website: null,
+        awards: null,
+        sweetness: null,
+        sourness: null,
+        thickness: null,
+        carbonation: null,
+        has_sweetener: null,
+        ingredients: null,
+        alcohol_percentage: null,
+        image_name: null,
+        created_at: null,
+        updated_at: null,
+      },
+    ];
+    useMyActivityDecorationsRef.current = {
+      reactionByMakgeolliId: new Map(),
+      commentSet: new Set(),
+      favoriteSet: new Set(["fm_1", "fm_2"]),
+    };
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+      </Routes>,
+      { route: "/my-activity?tab=favorite" },
+    );
+
+    const cards = await screen.findAllByTestId("my-activity-grid-card");
+    expect(cards).toHaveLength(2);
+    // 5탭 단일 렌더 경로 회귀 방지 — favorite 도 동일 카드 testid
+    for (const card of cards) {
+      expect(card.dataset.isFavorite).toBe("true");
+    }
   });
 });

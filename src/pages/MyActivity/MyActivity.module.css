@@ -13,16 +13,12 @@
   color: var(--color-w);
 }
 
+/* iOS MyMakgeolliView LazyVGrid(columns:3, spacing:16) 미러.
+ * 5탭 단일 렌더 경로 — 코멘트 탭도 동일 그리드 사용. */
 .list {
   display: grid;
-  /* Filter / Awards / Search 그리드와 동일 — 앱 전체 일관성 */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-}
-
-.commentList {
-  display: flex;
-  flex-direction: column;
 }
 
 /* 비어있을 때 EmptyState / LoadingState / ErrorState 를 페이지 가운데에 표시.
@@ -33,10 +29,4 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
-}
-
-.divider {
-  height: 1px;
-  background-color: var(--color-w-10);
-  margin: var(--space-3) 0;
 }
