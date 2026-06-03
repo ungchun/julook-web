@@ -92,4 +92,31 @@ describe("useMyComment", () => {
     });
     expect(result.current.data).toBeNull();
   });
+
+  it("when userId is not loaded yet, isLoading is true (to prevent empty-CTA flicker in MyCommentSection)", async () => {
+    useUserIdMock.mockReturnValue(undefined);
+
+    const { result } = renderHook(() => useMyComment(MAKGEOLLI_ID), {
+      wrapper: makeWrapper(),
+    });
+
+    // 호출부(MyCommentSection)가 isLoading 만 보고 LoadingState 를 띄울 수 있도록,
+    // userId 미준비 단계도 isLoading/isPending = true 로 통합한다 (Phase 0 옵션 1).
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isPending).toBe(true);
+    // 단, fetch 자체는 아직 호출되어선 안 됨 (enabled 가드 유지).
+    expect(fetchMyCommentMock).not.toHaveBeenCalled();
+  });
+
+  it("when makgeolliId is undefined, isLoading is true (same reason)", async () => {
+    useUserIdMock.mockReturnValue(USER_ID);
+
+    const { result } = renderHook(() => useMyComment(undefined), {
+      wrapper: makeWrapper(),
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isPending).toBe(true);
+    expect(fetchMyCommentMock).not.toHaveBeenCalled();
+  });
 });

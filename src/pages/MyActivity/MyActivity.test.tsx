@@ -368,6 +368,43 @@ describe("MyActivity page", () => {
     expect(screen.getByText("느린마을")).toBeInTheDocument();
   });
 
+  it("when ?tab=comment, clicking a comment row navigates to /makgeolli/:id (mirrors iOS myMakgeolliItemTapped)", async () => {
+    useMyCommentsRef.current = [
+      {
+        comment: {
+          id: "c_1",
+          user_id: FIXED_USER_ID,
+          makgeolli_id: "nav-target-id",
+          comment: "이동 테스트용 코멘트",
+          is_public: true,
+          created_at: "2025-04-01T00:00:00Z",
+          updated_at: "2025-04-02T00:00:00Z",
+        },
+        makgeolli: makeItem({
+          makgeolliId: "nav-target-id",
+          name: "이동타깃막걸리",
+        }).makgeolli,
+      },
+    ];
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/my-activity" element={<MyActivity />} />
+        <Route path="/makgeolli/:id" element={<DetailProbe />} />
+      </Routes>,
+      { route: "/my-activity?tab=comment" },
+    );
+
+    // CommentRow 가 렌더된 후 클릭
+    const commentBody = await screen.findByText("이동 테스트용 코멘트");
+    await user.click(commentBody);
+
+    // iOS MyMakgeolliCore .myMakgeolliItemTapped → fetchMakgeolliDetailEffect 와 동일하게
+    // Detail 화면(/makgeolli/:id) 으로 push 되어야 한다. ActionSheet 가 아니라 라우팅이 정답.
+    expect(await screen.findByTestId("detail-probe")).toBeInTheDocument();
+  });
+
   it("when ?tab=like and result is empty, renders '비어있어요'", async () => {
     useMyLikedRef.current = [];
 

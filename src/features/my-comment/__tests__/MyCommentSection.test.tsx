@@ -15,15 +15,21 @@ vi.mock("@/shared/lib/user-comments", () => ({
   deleteMyComment: (...args: unknown[]) => deleteMyCommentMock(...args),
 }));
 
+// useUserId 는 케이스마다 값을 바꿔야 하므로 vi.hoisted 로 가변 mock 제공.
 const FIXED_USER_ID = "user-fixture-id";
+const { useUserIdMock } = vi.hoisted(() => ({
+  useUserIdMock: vi.fn<() => string | undefined>(),
+}));
 vi.mock("@/shared/lib/use-user-id", () => ({
-  useUserId: () => FIXED_USER_ID,
+  useUserId: () => useUserIdMock(),
 }));
 
 beforeEach(() => {
   vi.clearAllMocks();
   upsertMyCommentMock.mockResolvedValue(undefined);
   deleteMyCommentMock.mockResolvedValue(undefined);
+  // 기본값: userId 가 이미 로드된 상태 (대다수 케이스).
+  useUserIdMock.mockReturnValue(FIXED_USER_ID);
 });
 
 const MAKGEOLLI_ID = "makgeolli-fixture-id";
@@ -92,6 +98,29 @@ describe("MyCommentSection", () => {
 
     expect(await screen.findByText("비공개")).toBeInTheDocument();
     expect(screen.queryByText("전체공개")).not.toBeInTheDocument();
+  });
+
+  it("when userId is not yet loaded, renders LoadingState instead of empty CTA (prevents flicker on first Detail mount)", async () => {
+    // userId 미로드 상태에서는 빈 CTA placeholder ("터치해서 코멘트를 남겨보세요!") 가
+    // 잠깐 보이는 깜빡임이 발생하지 않아야 한다. useMyComment 가 isLoading=true 를
+    // 반환하므로 MyCommentSection 은 LoadingState 만 렌더.
+    useUserIdMock.mockReturnValue(undefined);
+    // fetchMyComment 는 호출되지 않아야 하지만, 만약 호출되더라도 영향 없도록 stub.
+    fetchMyCommentMock.mockResolvedValue(null);
+
+    renderWithProviders(<MyCommentSection makgeolliId={MAKGEOLLI_ID} />);
+
+    // 섹션 헤더는 정상 렌더 (이 부분은 데이터 무관).
+    expect(await screen.findByText("내 코멘트")).toBeInTheDocument();
+
+    // LoadingState 가 보이고, 빈 CTA 텍스트는 보이지 않아야 한다.
+    expect(screen.getByRole("status", { name: "로딩 중" })).toBeInTheDocument();
+    expect(
+      screen.queryByText("터치해서 코멘트를 남겨보세요!"),
+    ).not.toBeInTheDocument();
+
+    // userId 가 미준비이면 fetch 도 호출되면 안 된다.
+    expect(fetchMyCommentMock).not.toHaveBeenCalled();
   });
 
   it("when existing comment box is tapped, opens action sheet (수정하기/삭제하기)", async () => {
