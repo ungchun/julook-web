@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MakgeolliGridCard } from "@/features/makgeolli-list";
 import {
@@ -7,11 +7,19 @@ import {
   useMyCommentActivity,
 } from "@/features/my-activity";
 import { useFavoriteMakgeollis } from "@/features/favorites";
+import {
+  CommentActionSheet,
+  CommentEditorSheet,
+  DeleteConfirmDialog,
+  useSaveMyComment,
+  useDeleteMyComment,
+} from "@/features/my-comment";
 import { CommentRow } from "@/shared/ui/CommentRow";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import { SubTabHeader, type ActivityTab } from "./SubTabHeader";
+import type { UserComment } from "@/shared/types/user-comment";
 import styles from "./MyActivity.module.css";
 
 const VALID_TABS = new Set<ActivityTab>([
@@ -83,6 +91,12 @@ function CardPane({
   return null;
 }
 
+type CommentSheetState =
+  | { kind: "none" }
+  | { kind: "action"; comment: UserComment }
+  | { kind: "edit"; comment: UserComment }
+  | { kind: "confirm-delete"; comment: UserComment };
+
 // /my-activity — iOS MyMakgeolliView 미러. 4 sub-탭(전체/좋아요/싫어요/코멘트).
 export function MyActivity() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -95,6 +109,14 @@ export function MyActivity() {
   const comments = useMyCommentActivity();
   const favorites = useFavoriteMakgeollis();
   const favoriteItems = favorites.data?.map((m) => ({ makgeolli: m }));
+
+  // comment 탭의 ActionSheet/Editor/ConfirmDialog 진입 상태.
+  // 행 클릭이 ActionSheet 를 열고, 거기서 수정/삭제 분기.
+  const [sheet, setSheet] = useState<CommentSheetState>({ kind: "none" });
+  const activeMakgeolliId =
+    sheet.kind === "none" ? "" : sheet.comment.makgeolli_id;
+  const saveComment = useSaveMyComment(activeMakgeolliId);
+  const deleteComment = useDeleteMyComment(activeMakgeolliId);
 
   // 전체 탭 — reaction/comment 합집합에 "찜 only" 막걸리를 dedup 추가.
   // 찜은 timestamp 가 없어 활동 항목 가장 위(가장 최근)로 배치.
@@ -186,7 +208,9 @@ export function MyActivity() {
                   <CommentRow
                     comment={item.comment}
                     makgeolli={item.makgeolli}
-                    onClick={() => goDetail(item.makgeolli.id)}
+                    onClick={() =>
+                      setSheet({ kind: "action", comment: item.comment })
+                    }
                   />
                   {idx !== comments.data.length - 1 && (
                     <div className={styles.divider} />
@@ -197,6 +221,42 @@ export function MyActivity() {
           )}
         </>
       )}
+
+      <CommentActionSheet
+        open={sheet.kind === "action"}
+        onEdit={() =>
+          sheet.kind === "action" &&
+          setSheet({ kind: "edit", comment: sheet.comment })
+        }
+        onDelete={() =>
+          sheet.kind === "action" &&
+          setSheet({ kind: "confirm-delete", comment: sheet.comment })
+        }
+        onCancel={() => setSheet({ kind: "none" })}
+      />
+      <CommentEditorSheet
+        open={sheet.kind === "edit"}
+        mode="edit"
+        initialContent={
+          sheet.kind === "edit" ? sheet.comment.comment : undefined
+        }
+        initialIsPublic={
+          sheet.kind === "edit" ? sheet.comment.is_public : undefined
+        }
+        onSubmit={async (input) => {
+          await saveComment.save(input);
+          setSheet({ kind: "none" });
+        }}
+        onCancel={() => setSheet({ kind: "none" })}
+      />
+      <DeleteConfirmDialog
+        open={sheet.kind === "confirm-delete"}
+        onConfirm={async () => {
+          await deleteComment.delete();
+          setSheet({ kind: "none" });
+        }}
+        onCancel={() => setSheet({ kind: "none" })}
+      />
     </main>
   );
 }

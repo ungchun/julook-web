@@ -8,6 +8,7 @@ import {
   IngredientsSection,
 } from "@/features/makgeolli-detail";
 import { ReactionButtons } from "@/features/reaction";
+import { MyCommentSection } from "@/features/my-comment";
 import { useFavorites } from "@/features/favorites";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
@@ -98,6 +99,7 @@ export function Detail() {
             carbonation={data.carbonation}
           />
           <ReactionButtons makgeolliId={data.id} />
+          <MyCommentSection makgeolliId={data.id} />
           <AwardsSection awards={data.awards} />
           <EvaluationSection makgeolliId={data.id} />
           <IngredientsSection ingredients={data.ingredients} />

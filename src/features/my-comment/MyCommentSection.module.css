@@ -1,0 +1,73 @@
+/* 상세 페이지 "내 코멘트" 섹션 — 라벨 / 박스 / 푸터(날짜 + 수정) */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+}
+
+.visibility {
+  font-size: var(--font-size-12);
+  color: var(--color-w-50);
+}
+
+/* 빈 상태 — 회색 라운드 박스 + 가운데 정렬 안내 텍스트, 박스 전체가 버튼 */
+.emptyBox {
+  width: 100%;
+  background-color: var(--color-w-10);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-w-50);
+  font-size: var(--font-size-14);
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* 작성됨 — 박스에 본문만 (날짜/수정은 박스 바깥 푸터로) */
+.commentBox {
+  background-color: var(--color-w-10);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.commentBody {
+  font-size: var(--font-size-14);
+  color: var(--color-w);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date {
+  font-size: var(--font-size-12);
+  color: var(--color-w-50);
+}
+
+.editButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  padding: 0;
+}

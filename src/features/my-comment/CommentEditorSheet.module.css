@@ -1,0 +1,119 @@
+/* 전체 화면 시트 — iOS .sheet 미러 */
+.sheet {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-dark-base);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-w-10);
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-16);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+}
+
+.title {
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+}
+
+.saveButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+}
+
+.saveButtonDisabled {
+  background: none;
+  border: none;
+  color: var(--color-w-25);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  cursor: not-allowed;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200px;
+  background: none;
+  border: none;
+  resize: none;
+  color: var(--color-w);
+  font-size: var(--font-size-15);
+  font-family: var(--font-family-base);
+  outline: none;
+  line-height: 1.5;
+}
+
+.textarea::placeholder {
+  color: var(--color-w-50);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-w-10);
+}
+
+.privacyRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.privacyLabel {
+  color: var(--color-w-85);
+  font-size: var(--font-size-14);
+}
+
+.privacyCheckbox {
+  width: 20px;
+  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1.5px solid var(--color-w-50);
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.privacyCheckbox:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.privacyCheckbox:checked::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background-color: var(--color-dark-base);
+}

@@ -1,0 +1,63 @@
+/* 모바일 BottomSheet — 하단에서 슬라이드 (iOS ActionSheet 미러) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+}
+
+.actionGroup {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-dark-gray);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.action {
+  background: none;
+  border: none;
+  padding: var(--space-4) 0;
+  font-size: var(--font-size-17);
+  color: var(--color-w);
+  cursor: pointer;
+}
+
+.destructiveAction {
+  background: none;
+  border: none;
+  padding: var(--space-4) 0;
+  font-size: var(--font-size-17);
+  color: var(--color-alert);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-w-10);
+}
+
+.cancelAction {
+  background-color: var(--color-dark-gray);
+  border: none;
+  padding: var(--space-4) 0;
+  font-size: var(--font-size-17);
+  color: var(--color-w);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}

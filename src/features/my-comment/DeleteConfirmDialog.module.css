@@ -1,0 +1,65 @@
+/* 중앙 모달 다이얼로그 — iOS Alert 미러 */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  width: 280px;
+  background-color: var(--color-dark-gray);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--font-size-17);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-w);
+  text-align: center;
+  margin: 0;
+}
+
+.body {
+  font-size: var(--font-size-14);
+  color: var(--color-w-85);
+  text-align: center;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.cancelButton {
+  flex: 1;
+  padding: var(--space-3) 0;
+  background-color: var(--color-w-10);
+  color: var(--color-w);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.deleteButton {
+  flex: 1;
+  padding: var(--space-3) 0;
+  background-color: var(--color-alert);
+  color: var(--color-w);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}

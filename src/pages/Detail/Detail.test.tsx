@@ -32,6 +32,11 @@ vi.mock("@/features/reaction", () => ({
   ReactionButtons: () => null,
 }));
 
+// MyCommentSection 은 my-comment feature 자체 테스트에서 검증 — Detail 통합에선 stub.
+vi.mock("@/features/my-comment", () => ({
+  MyCommentSection: () => null,
+}));
+
 // useFavorites 는 별도 단위 검증 — Detail 통합 테스트에선 favoriteState/toggle 만 주입.
 const favoritesToggleMock = vi.fn();
 const favoritesIsFavoriteRef: { current: (id: string) => boolean } = {
