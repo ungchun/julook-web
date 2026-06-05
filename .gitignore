@@ -48,3 +48,11 @@ _workspace_prev10/
 _workspace_prev11/
 _workspace_prev12/
 _workspace_prev13/
+_workspace_prev14/
+_workspace_prev15/
+_workspace_prev16/
+_workspace_prev17/
+_workspace_prev18/
+
+# Local scheduler lock
+.claude/scheduled_tasks.lock

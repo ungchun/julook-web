@@ -52,4 +52,14 @@ describe("MakgeolliCard", () => {
     // Assert: 카드는 콜백 호출만 책임 — 네비게이션 자체는 부모가 검증.
     expect(onClick).toHaveBeenCalledOnce();
   });
+
+  // iOS L10n.Common.Taste.{sweetness,sourness}Short 미러: 단맛→"단", 신맛→"신".
+  // 회귀 가드 — "달"/"시" 오타로 되돌아가는 것을 차단.
+  it("renders sweet/sour short labels as 단/신 (not 달/시)", () => {
+    render(<MakgeolliCard makgeolli={FIXTURE} />);
+    expect(screen.getByText("단")).toBeInTheDocument();
+    expect(screen.getByText("신")).toBeInTheDocument();
+    expect(screen.queryByText("달")).not.toBeInTheDocument();
+    expect(screen.queryByText("시")).not.toBeInTheDocument();
+  });
 });

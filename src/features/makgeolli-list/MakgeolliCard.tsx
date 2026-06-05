@@ -9,8 +9,8 @@ type MakgeolliCardProps = {
 
 // 맛 4지표 약어 라벨 (iOS L10n.Common.Taste.{sweetness,sourness,thickness,carbonation}Short).
 const TASTE_LABELS = [
-  { key: "sweetness", label: "달" },
-  { key: "sourness", label: "시" },
+  { key: "sweetness", label: "단" },
+  { key: "sourness", label: "신" },
   { key: "thickness", label: "걸" },
   { key: "carbonation", label: "탄" },
 ] as const satisfies ReadonlyArray<{
