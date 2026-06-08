@@ -15,6 +15,15 @@ body {
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* iOS WKWebView rubber-band overscroll 영역의 webview 기본 흰색 노출 차단. */
+  overscroll-behavior: none;
+}
+
+/* 모바일에서도 #root 자체가 viewport 전체 + 다크 배경 보장.
+ * (기존 481px 이상 분기만 있어 모바일에선 콘텐츠 짧을 때 webview 기본 흰색 노출.) */
+#root {
+  min-height: 100vh;
+  background-color: var(--color-dark-base);
 }
 
 /* main의 좌우 padding은 각 페이지 .module.css에서 직접 부여 (글로벌 main 셀렉터가

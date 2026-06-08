@@ -16,7 +16,11 @@ export function RandomMakgeolliSection() {
         className={sectionStyles.section}
       >
         <h2 className={sectionStyles.title}>이 막걸리는 어때요?</h2>
-        <MakgeolliCardSkeleton count={5} />
+        <div className={sectionStyles.list}>
+          <div className={sectionStyles.edgeSpacer} aria-hidden="true" />
+          <MakgeolliCardSkeleton count={5} />
+          <div className={sectionStyles.edgeSpacer} aria-hidden="true" />
+        </div>
       </section>
     );
   }
@@ -29,6 +33,7 @@ export function RandomMakgeolliSection() {
     >
       <h2 className={sectionStyles.title}>이 막걸리는 어때요?</h2>
       <div className={sectionStyles.list}>
+        <div className={sectionStyles.edgeSpacer} aria-hidden="true" />
         {data.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}
@@ -36,6 +41,7 @@ export function RandomMakgeolliSection() {
             onClick={() => navigate(`/makgeolli/${makgeolli.id}`)}
           />
         ))}
+        <div className={sectionStyles.edgeSpacer} aria-hidden="true" />
       </div>
     </section>
   );

@@ -1,7 +1,38 @@
 .wrap {
   display: flex;
-  justify-content: flex-end;
-  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.infoButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-w-50);
+  font-size: 12px;
+}
+
+.infoText {
+  user-select: none;
+}
+
+.infoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--color-w-25);
+  color: var(--color-dark-base);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .label {

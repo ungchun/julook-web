@@ -4,7 +4,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 70px;
+  padding-bottom: env(safe-area-inset-bottom);
   background-color: var(--color-dark-base);
   display: flex;
   align-items: stretch;
@@ -37,9 +38,18 @@
   color: var(--color-primary);
 }
 
+/* SVG 를 CSS mask 로 바꿔서 .tab 의 color (active=primary, inactive=w-50) 를
+ * background-color: currentColor 로 그대로 받음. SVG 자체의 fill 색은 무시됨. */
 .icon {
   width: 24px;
   height: 24px;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
 }
 
 .label {

@@ -156,7 +156,12 @@ export function MyActivity() {
   return (
     <main
       className={styles.main}
-      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+      style={{
+        paddingTop: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
+      }}
     >
       <h1 className={styles.title}>내 활동</h1>
       <SubTabHeader selected={selected} onSelect={handleSelect} />

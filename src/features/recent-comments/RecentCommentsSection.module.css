@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 16px;
 }
 
 .titleRow {
@@ -31,6 +32,11 @@
 .list {
   display: flex;
   flex-direction: column;
+}
+
+/* 첫 CommentRow 의 padding-top(8) 제거 — section gap(20) 위에 8 이 누적되어 다른 섹션보다 더 떨어져 보이는 문제 보정. */
+.list > *:first-child {
+  padding-top: 0;
 }
 
 .divider {

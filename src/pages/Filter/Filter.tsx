@@ -92,7 +92,12 @@ export function Filter() {
   return (
     <main
       className={styles.main}
-      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+      style={{
+        paddingTop: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
+      }}
     >
       <PageNav onClose={() => navigate(-1)} title="특징으로 찾기" />
 

@@ -13,7 +13,12 @@ export function Home() {
   return (
     <main
       className={styles.main}
-      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 60 }}
+      style={{
+        paddingTop: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
+      }}
     >
       <header className={styles.header}>
         <h1 className={styles.title}>주룩</h1>

@@ -28,7 +28,12 @@ export function Detail() {
   return (
     <main
       className={styles.main}
-      style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 120 }}
+      style={{
+        paddingTop: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
+      }}
     >
       <span data-testid="detail-id" className={styles.detailId}>
         {id}

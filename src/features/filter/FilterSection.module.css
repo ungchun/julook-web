@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 16px;
 }
 
 .titleRow {
@@ -28,13 +29,27 @@
   height: 16px;
 }
 
-/* 가로 스크롤 — main padding 상쇄용 margin만. 첫/마지막 spacer div로. */
+/* 가로 스크롤 — main padding(16) 상쇄. 양옆 16 은 :first-child / :last-child margin 으로 직접 부여
+ * (iOS WKWebView overflow scroll 안의 padding 무시 버그 우회). */
 .list {
   display: flex;
   gap: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+}
+
+/* width 16 + negative margin 으로 인접 gap(16) 상쇄 → 첫 chip viewport 16 (= title 정렬). */
+.edgeSpacer {
+  flex: 0 0 16px;
+}
+.edgeSpacer:first-child {
+  margin-right: -16px;
+}
+.edgeSpacer:last-child {
+  margin-left: -16px;
 }
 
 .list::-webkit-scrollbar {

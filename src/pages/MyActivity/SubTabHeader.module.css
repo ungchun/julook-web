@@ -8,7 +8,7 @@
 .tabActive {
   background: transparent;
   border: 0;
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;

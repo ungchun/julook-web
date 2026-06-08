@@ -104,7 +104,7 @@ describe("Search page", () => {
     expect(screen.getAllByTestId("makgeolli-grid-card")).toHaveLength(2);
   });
 
-  it("when results are empty for a query, renders '검색 결과가 없어요'", async () => {
+  it("when results are empty for a query, renders '<쿼리> 검색 결과가 없어요' + 등록 요청하기 버튼", async () => {
     const user = userEvent.setup();
     useSearchRef.current = () => ({ data: [], isLoading: false });
 
@@ -112,7 +112,10 @@ describe("Search page", () => {
 
     await user.type(screen.getByRole("searchbox"), "abc");
     expect(
-      await screen.findByText("검색 결과가 없어요"),
+      await screen.findByText("'abc' 검색 결과가 없어요."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "등록 요청하기" }),
     ).toBeInTheDocument();
   });
 

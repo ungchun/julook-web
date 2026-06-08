@@ -1,7 +1,8 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding-top: 16px;
 }
 
 .title {
@@ -10,15 +11,29 @@
   color: var(--color-w);
 }
 
-/* 가로 스크롤 — main padding 상쇄용 margin만. 첫/마지막 위치는 컴포넌트의 spacer div로
- * 처리 (iOS WebKit overflow scroll padding 무시 버그 우회). */
+/* 가로 스크롤 — main padding(16) 상쇄로 viewport edge 까지 확장.
+ * 첫/마지막 카드 양옆 16 padding 은 :first-child / :last-child margin 으로 직접 부여 —
+ * iOS WKWebView 가 overflow scroll 안의 padding-left/right 를 무시하는 버그 우회. */
 .list {
   display: flex;
   gap: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+}
+
+/* width 16 + negative margin 으로 인접 gap(16) 상쇄 → 첫 카드 viewport 16 (= title 정렬). */
+.edgeSpacer {
+  flex: 0 0 16px;
+}
+.edgeSpacer:first-child {
+  margin-right: -16px;
+}
+.edgeSpacer:last-child {
+  margin-left: -16px;
 }
 
 .list::-webkit-scrollbar {

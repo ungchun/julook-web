@@ -15,24 +15,26 @@ export function TopicSection() {
   return (
     <section data-testid="topic-section" className={styles.section}>
       <h2 className={styles.title}>주제로 찾기</h2>
-      <div className={styles.list}>
-        {koreaAwards.map((award) => (
-          <button
-            key={award.id}
-            type="button"
-            className={styles.card}
-            onClick={() => navigate(`/awards/${award.id}`)}
-          >
-            <div className={styles.cardName}>
-              {award.name.split(" ").join("\n")}
-            </div>
-            <img
-              className={styles.cardLogo}
-              src="/assets/icon/korea_awards_logo.svg"
-              alt=""
-            />
-          </button>
-        ))}
+      <div className={styles.scroller}>
+        <div className={styles.list}>
+          {koreaAwards.map((award) => (
+            <button
+              key={award.id}
+              type="button"
+              className={styles.card}
+              onClick={() => navigate(`/awards/${award.id}`)}
+            >
+              <div className={styles.cardName}>
+                {award.name.split(" ").join("\n")}
+              </div>
+              <img
+                className={styles.cardLogo}
+                src="/assets/icon/korea_awards_logo.svg"
+                alt=""
+              />
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );

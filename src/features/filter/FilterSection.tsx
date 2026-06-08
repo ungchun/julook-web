@@ -30,6 +30,7 @@ export function FilterSection() {
         />
       </button>
       <div className={styles.list}>
+        <div className={styles.edgeSpacer} aria-hidden="true" />
         {FILTER_ORDER.map((slug) => {
           const meta = FILTER_META[slug];
           return (
@@ -46,6 +47,7 @@ export function FilterSection() {
             </button>
           );
         })}
+        <div className={styles.edgeSpacer} aria-hidden="true" />
       </div>
     </section>
   );

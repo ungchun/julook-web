@@ -35,7 +35,14 @@ export function BottomTabBar() {
             aria-current={active ? "page" : undefined}
             onClick={() => navigate(tab.path)}
           >
-            <img className={styles.icon} src={tab.icon} alt="" />
+            <span
+              className={styles.icon}
+              style={{
+                WebkitMaskImage: `url(${tab.icon})`,
+                maskImage: `url(${tab.icon})`,
+              }}
+              aria-hidden="true"
+            />
             <span className={styles.label}>{tab.label}</span>
           </button>
         );

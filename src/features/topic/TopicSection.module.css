@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 16px;
 }
 
 .title {
@@ -10,14 +11,26 @@
   color: var(--color-w);
 }
 
-/* 가로 스크롤 — main padding 상쇄용 margin만. 첫/마지막 spacer div로. */
+/* iOS WKWebView 가 overflow-x scroll 안의 모든 padding/margin/spacer 를 무시 →
+ * scroll wrapper 와 inner list 를 분리. wrapper 가 overflow + viewport 확장 담당,
+ * inner list 는 width:max-content + 좌우 padding 16 으로 양옆 spacing 보장. */
+.scroller {
+  margin-left: -16px;
+  margin-right: -16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
 .list {
   display: flex;
   gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  padding-left: 16px;
+  padding-right: 16px;
+  width: max-content;
 }
 
 .list::-webkit-scrollbar {

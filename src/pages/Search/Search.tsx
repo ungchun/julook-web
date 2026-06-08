@@ -6,6 +6,8 @@ import {
   useRecentSearches,
   useSearch,
 } from "@/features/search";
+import { RegisterRequestDialog } from "@/features/search/RegisterRequestDialog";
+import { useRequestRegister } from "@/features/search/use-request-register";
 import {
   getPersistedSearchQuery,
   setPersistedSearchQuery,
@@ -46,6 +48,18 @@ export function Search() {
   };
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { request, isPending: isRequesting } = useRequestRegister();
+  const [showRequestDone, setShowRequestDone] = useState(false);
+
+  const onRequestRegister = async () => {
+    if (isRequesting) return;
+    try {
+      await request(debouncedQuery);
+      setShowRequestDone(true);
+    } catch {
+      // 실패는 silent — iOS도 사용자에게 노출 안 함 (검색 흐름 비차단).
+    }
+  };
 
   // iOS SearchCore.searchSubmitted 미러 — 빈 검색어는 무시, 그렇지 않으면 add.
   // submit 후 input.blur() 호출 — 모바일 키보드를 자동으로 내림.
@@ -101,7 +115,19 @@ export function Search() {
         <ErrorState onRetry={() => refetch()} />
       )}
       {debouncedQuery.length > 0 && !isError && data?.length === 0 && (
-        <EmptyState message="검색 결과가 없어요" />
+        <div className={styles.emptyResult}>
+          <p className={styles.emptyMessage}>
+            {`'${debouncedQuery}' 검색 결과가 없어요.`}
+          </p>
+          <button
+            type="button"
+            className={styles.requestButton}
+            onClick={() => void onRequestRegister()}
+            disabled={isRequesting}
+          >
+            등록 요청하기
+          </button>
+        </div>
       )}
       {data != null && data.length > 0 && (
         <div className={styles.list}>
@@ -115,6 +141,10 @@ export function Search() {
           {hasMore && <InfiniteListSentinel onIntersect={loadMore} />}
         </div>
       )}
+      <RegisterRequestDialog
+        open={showRequestDone}
+        onClose={() => setShowRequestDone(false)}
+      />
     </main>
   );
 }

@@ -47,6 +47,8 @@
 .countRow {
   display: flex;
   justify-content: space-between;
+  /* section gap(20) 위에 -12 보정 → 좋았어요/아쉬워요 라벨이 % 바에 더 가까이 (8px). */
+  margin-top: calc(-1 * var(--space-3));
 }
 
 .countText {

@@ -34,6 +34,11 @@ export default defineConfig({
       build: "vite build",
     },
   },
+  webViewProps: {
+    type: "partner",
+    bounces: false,
+    pullToRefreshEnabled: false,
+  },
   permissions: [],
   outdir: "dist",
 });

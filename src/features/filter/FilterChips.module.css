@@ -2,8 +2,8 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  /* horizontal: main padding 상쇄 / vertical: nav 와 가까이 (gap 14 → 효과 6) */
-  margin: -8px -16px 0;
+  /* horizontal: main padding 상쇄. vertical: -4 (위로 4 당김). */
+  margin: -4px -16px 0;
   padding: 0;
 }
 

@@ -12,7 +12,11 @@ export function NewReleasesSection() {
     return (
       <section className={styles.section}>
         <h2 className={styles.title}>신상 막걸리</h2>
-        <MakgeolliCardSkeleton count={5} />
+        <div className={styles.list}>
+          <div className={styles.edgeSpacer} aria-hidden="true" />
+          <MakgeolliCardSkeleton count={5} />
+          <div className={styles.edgeSpacer} aria-hidden="true" />
+        </div>
       </section>
     );
   }
@@ -22,6 +26,7 @@ export function NewReleasesSection() {
     <section className={styles.section}>
       <h2 className={styles.title}>신상 막걸리</h2>
       <div className={styles.list}>
+        <div className={styles.edgeSpacer} aria-hidden="true" />
         {newReleases.map((makgeolli) => (
           <MakgeolliCard
             key={makgeolli.id}
@@ -29,6 +34,7 @@ export function NewReleasesSection() {
             onClick={() => navigate(`/makgeolli/${makgeolli.id}`)}
           />
         ))}
+        <div className={styles.edgeSpacer} aria-hidden="true" />
       </div>
     </section>
   );
